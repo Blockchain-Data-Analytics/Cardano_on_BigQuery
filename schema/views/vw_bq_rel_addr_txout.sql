@@ -57,10 +57,8 @@ END;
 $BODY$;
 
 ALTER FUNCTION analytics.vw_bq_rel_addr_txout(integer)
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT EXECUTE ON FUNCTION analytics.vw_bq_rel_addr_txout(integer) TO PUBLIC;
 
-GRANT EXECUTE ON FUNCTION analytics.vw_bq_rel_addr_txout(integer) TO db_sync_master;
-
-GRANT EXECUTE ON FUNCTION analytics.vw_bq_rel_addr_txout(integer) TO db_sync_reader;
+GRANT EXECUTE ON FUNCTION analytics.vw_bq_rel_addr_txout(integer) TO cardano;

@@ -15,9 +15,8 @@ JOIN public.block b ON b.id = tx.block_id
 ORDER BY b.epoch_no, b.slot_no, sa.view ASC;
 
 ALTER TABLE analytics.vw_bq_rel_stake_hash
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_rel_stake_hash TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_rel_stake_hash TO db_sync_reader;
-GRANT ALL ON TABLE analytics.vw_bq_rel_stake_hash TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_rel_stake_hash TO cardano;
 

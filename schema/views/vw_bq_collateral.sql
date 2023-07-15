@@ -18,8 +18,7 @@ FROM public.collateral_tx_in col
          JOIN public.block blout ON blout.id = txout.block_id;
 
 ALTER TABLE analytics.vw_bq_collateral
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_collateral TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_collateral TO db_sync_reader;
-GRANT ALL ON TABLE analytics.vw_bq_collateral TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_collateral TO cardano;

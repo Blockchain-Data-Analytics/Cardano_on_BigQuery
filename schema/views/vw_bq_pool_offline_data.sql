@@ -25,7 +25,7 @@ FROM public.pool_offline_data AS pod
 ORDER BY block.epoch_no, pool_hash, metadata_registered_tx_hash ASC;
 
 ALTER TABLE analytics.vw_bq_pool_offline_data
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_pool_offline_data TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_pool_offline_data TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_pool_offline_data TO cardano;

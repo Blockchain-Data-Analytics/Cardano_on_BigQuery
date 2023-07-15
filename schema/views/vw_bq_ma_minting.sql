@@ -20,9 +20,8 @@ CREATE OR REPLACE VIEW analytics.vw_bq_ma_minting
   ORDER BY ma.fingerprint;
 
 ALTER TABLE analytics.vw_bq_ma_minting
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_ma_minting TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_ma_minting TO db_sync_reader;
-GRANT ALL ON TABLE analytics.vw_bq_ma_minting TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_ma_minting TO cardano;
 

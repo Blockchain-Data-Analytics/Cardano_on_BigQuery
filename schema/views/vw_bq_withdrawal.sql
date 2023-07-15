@@ -16,7 +16,7 @@ FROM public.withdrawal w
 ORDER BY epoch_no, slot_no, txidx, stake_addr_hash ASC;
 
 ALTER TABLE analytics.vw_bq_withdrawal
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_withdrawal TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_withdrawal TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_withdrawal TO cardano;

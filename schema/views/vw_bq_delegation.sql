@@ -23,7 +23,7 @@ GROUP BY block.epoch_no, encode(stake_address.hash_raw, 'hex')
 ORDER BY epoch_no, stake_addr_hash ASC;
 
 ALTER TABLE analytics.vw_bq_delegation
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_delegation TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_delegation TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_delegation TO cardano;

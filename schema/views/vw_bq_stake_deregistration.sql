@@ -16,8 +16,7 @@ FROM public.stake_deregistration sd
 ORDER BY block.epoch_no, block.slot_no, tx.block_index, encode(sa.hash_raw, 'hex'), sd.cert_index ASC;
 
 ALTER TABLE analytics.vw_bq_stake_deregistration
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_stake_deregistration TO PUBLIC;
-GRANT SELECT ON TABLE analytics.vw_bq_stake_deregistration TO db_sync_reader;
-GRANT ALL ON TABLE analytics.vw_bq_stake_deregistration TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_stake_deregistration TO cardano;

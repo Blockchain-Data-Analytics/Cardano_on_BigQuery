@@ -16,7 +16,7 @@ FROM public.stake_registration sr
 ORDER BY block.epoch_no, block.slot_no, tx.block_index, encode(sa.hash_raw, 'hex'), sr.cert_index ASC;
 
 ALTER TABLE analytics.vw_bq_stake_registration
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_stake_registration TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_stake_registration TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_stake_registration TO cardano;

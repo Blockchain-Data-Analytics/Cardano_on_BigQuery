@@ -22,7 +22,7 @@ CREATE OR REPLACE VIEW analytics.vw_bq_redeemer
  ORDER BY block.epoch_no, block.slot_no, tx.block_index;
 
 ALTER TABLE analytics.vw_bq_redeemer
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_redeemer TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_redeemer TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_redeemer TO cardano;

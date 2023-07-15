@@ -18,7 +18,7 @@ FROM public.pool_owner po
 ORDER BY block.epoch_no, block.slot_no, tx.block_index, pool_hash, encode(sa.hash_raw, 'hex') ASC;
 
 ALTER TABLE analytics.vw_bq_pool_owner
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_pool_owner TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_pool_owner TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_pool_owner TO cardano;

@@ -18,7 +18,7 @@ FROM public.script sc
 ORDER BY block.epoch_no, block.slot_no, tx.block_index, script_hash ASC;
 
 ALTER TABLE analytics.vw_bq_script
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_script TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_script TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_script TO cardano;

@@ -27,7 +27,7 @@ FROM public.pool_update pu
 ORDER BY block.epoch_no, pool_hash, registered_tx_hash, cert_index ASC;
 
 ALTER TABLE analytics.vw_bq_pool_update
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_pool_update TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_pool_update TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_pool_update TO cardano;

@@ -25,7 +25,7 @@ LEFT JOIN public.cost_model cm ON cm.id = cost_model_id
 ORDER BY epoch_no ASC;
 
 ALTER TABLE analytics.vw_bq_epoch_param
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_epoch_param TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_epoch_param TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_epoch_param TO cardano;

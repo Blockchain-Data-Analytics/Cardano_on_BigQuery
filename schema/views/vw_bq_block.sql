@@ -26,7 +26,7 @@ FROM ( SELECT block_1.id AS block_id,
 ORDER BY block.epoch_no, block.slot_no ASC;
 
 ALTER TABLE analytics.vw_bq_block
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_block TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_block TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_block TO cardano;

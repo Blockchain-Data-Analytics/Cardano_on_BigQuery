@@ -39,7 +39,7 @@ FROM public.param_proposal pp
 ORDER BY pp.epoch_no, block.slot_no, tx.block_index, pp.key ASC;
 
 ALTER TABLE analytics.vw_bq_param_proposal
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_param_proposal TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_param_proposal TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_param_proposal TO cardano;

@@ -16,7 +16,7 @@ FROM public.reward
 ORDER BY reward.spendable_epoch, stake_addr_hash, reward.type, encode(pool_hash.hash_raw, 'hex') ASC;
 
 ALTER TABLE analytics.vw_bq_reward
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_reward TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_reward TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_reward TO cardano;

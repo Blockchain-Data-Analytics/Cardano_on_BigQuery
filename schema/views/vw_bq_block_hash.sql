@@ -11,8 +11,8 @@ FROM block
 ORDER BY block.epoch_no, block.slot_no ASC;
 
 ALTER TABLE analytics.vw_bq_block_hash
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_block_hash TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_block_hash TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_block_hash TO cardano;
 

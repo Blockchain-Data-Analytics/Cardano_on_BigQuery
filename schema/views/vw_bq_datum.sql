@@ -16,8 +16,7 @@ CREATE OR REPLACE VIEW analytics.vw_bq_datum
   ORDER BY block.slot_no;
 
 ALTER TABLE analytics.vw_bq_datum
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_datum TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_datum TO db_sync_reader;
-GRANT ALL ON TABLE analytics.vw_bq_datum TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_datum TO cardano;

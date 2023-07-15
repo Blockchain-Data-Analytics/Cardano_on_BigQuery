@@ -17,9 +17,8 @@ FROM public.tx_in
 ORDER BY b0.slot_no, tx0.block_index, tx_in.tx_out_index;
 
 ALTER TABLE analytics.vw_bq_tx_consumed_output
-    OWNER TO db_sync_master;
+    OWNER TO cardano;
 
 GRANT SELECT ON TABLE analytics.vw_bq_tx_consumed_output TO PUBLIC;
-GRANT ALL ON TABLE analytics.vw_bq_tx_consumed_output TO db_sync_reader;
-GRANT ALL ON TABLE analytics.vw_bq_tx_consumed_output TO db_sync_master;
+GRANT ALL ON TABLE analytics.vw_bq_tx_consumed_output TO cardano;
 

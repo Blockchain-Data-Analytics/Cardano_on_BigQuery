@@ -42,8 +42,9 @@ function upload_csv() {
 function copy_data() {
     local TABLENAME=$1
     local TARGETDATASET=$2
+    if [ -z "$BQ_PROJECT" ]; then echo "\$BQ_PROJECT undefined!"; (exit 1); fi
     local Q="INSERT INTO ${TARGETDATASET}.${TABLENAME} \
-             SELECT * FROM iog-data-analytics.db_sync.t2;"
+             SELECT * FROM ${BQ_PROJECT}.db_sync.t2;"
     if [ -z "$BQ" ]; then echo "\$BQ undefined!"; (exit 1); fi
 
     ${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc --append_table=true --nouse_legacy_sql "${Q}"

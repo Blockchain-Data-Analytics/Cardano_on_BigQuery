@@ -2,7 +2,7 @@
 --format=prettyjson
 --location=europe-west6
 --project_id=82823879527
---dataset_id=iog-data-analytics:db_sync
+--dataset_id=blockchain-analytics-392322:db_sync
 --headless=true
 --quiet=true
 --synchronous_mode=true

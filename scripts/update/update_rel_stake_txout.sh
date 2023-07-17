@@ -39,7 +39,7 @@ echo "   from $CLEAN_SLOT_NO"
 CSVNAME="update_rel_stake_txout-q1"
 if [ -e "${CSVNAME}.csv" ]; then rm -f "${CSVNAME}.csv"; fi
 SCHEMA="rel_stake_txout"
-DATASETID="iog-data-analytics:db_sync"
+DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert slots (clean until max) into table: tmp_rel_stake_txout_1
 TMPTBL="tmp_rel_stake_txout_1"
@@ -82,8 +82,8 @@ fi
 bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 
 # run the transaction
-SRCDATASET="iog-data-analytics.db_sync"
-TARGETTBL="iog-data-analytics.cardano_mainnet.rel_stake_txout"
+SRCDATASET="${BQ_PROJECT}.db_sync"
+TARGETTBL="${BQ_PROJECT}.cardano_mainnet.rel_stake_txout"
 Q="
    BEGIN TRANSACTION;
    -- 1 insert new slots

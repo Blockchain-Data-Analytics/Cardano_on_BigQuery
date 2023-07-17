@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -13,5 +14,5 @@ function Q() {
   WHERE epoch_no = ${EPOCH}"
 }
 
-process_epoch_f Q "block_hash" "iog-data-analytics.db_sync" 330
+process_epoch_f Q "block_hash" "${BQ_PROJECT}.db_sync" 330
 

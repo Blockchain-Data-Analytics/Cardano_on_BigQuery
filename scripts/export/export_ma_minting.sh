@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -14,4 +15,4 @@ function Q() {
 }
 
 # ma minting started in epoch 251
-process_epoch_f Q "ma_minting" "iog-data-analytics.db_sync" 251
+process_epoch_f Q "ma_minting" "${BQ_PROJECT}.db_sync" 251

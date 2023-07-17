@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -25,4 +26,4 @@ function Q() {
 }
 
 # starting from 211, continuing from 216
-process_epoch_f Q "tx_metadata" "iog-data-analytics.db_sync" 216
+process_epoch_f Q "tx_metadata" "${BQ_PROJECT}.db_sync" 216

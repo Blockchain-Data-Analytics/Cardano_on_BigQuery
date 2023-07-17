@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -24,4 +25,4 @@ function transform_csv() {
 }
 
 # do the query only once
-process_epoch_f Q "datum" "iog-data-analytics.db_sync" 99999
+process_epoch_f Q "datum" "${BQ_PROJECT}.db_sync" 99999

@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -27,4 +28,4 @@ function transform_csv() {
 }
 
 # scripts started in epoch 238(1), but really from epoch 251
-process_epoch_f Q "script" "iog-data-analytics.db_sync" 238
+process_epoch_f Q "script" "${BQ_PROJECT}.db_sync" 238

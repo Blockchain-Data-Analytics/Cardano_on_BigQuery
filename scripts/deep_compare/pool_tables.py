@@ -1,3 +1,4 @@
+import os
 import json
 import base64
 from decimal import Decimal
@@ -11,7 +12,7 @@ def query_pool_tables(epoch_no):
     ]
 
 
-def query_pool_offline_data(epoch_no):
+def query_pool_offline_data(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return (  f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -25,7 +26,7 @@ def query_pool_offline_data(epoch_no):
                 ||')' AS str
               FROM
               (SELECT pool_hash, epoch_no, ticker_name, json, metadata_url, metadata_hash, metadata_registered_tx_hash
-                 FROM `iog-data-analytics.cardano_mainnet.pool_offline_data` 
+                 FROM `{bq_project}.cardano_mainnet.pool_offline_data` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, pool_hash, metadata_registered_tx_hash ASC))
             ) AS innerq;""",
@@ -49,7 +50,7 @@ def query_pool_offline_data(epoch_no):
                 ) AS innerq;""",
         lambda x: x, lambda x: x)
 
-def query_pool_owner(epoch_no):
+def query_pool_owner(epoch_no, bq_project = os.environ['BQ_PROJECT'] ):
     return( f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -61,7 +62,7 @@ def query_pool_owner(epoch_no):
                 ||')' AS str
               FROM
               (SELECT pool_hash, epoch_no, addr_hash, slot_no, txidx
-                 FROM `iog-data-analytics.cardano_mainnet.pool_owner` 
+                 FROM `{bq_project}.cardano_mainnet.pool_owner` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, slot_no, txidx, pool_hash, addr_hash ASC))
             ) AS innerq;""",
@@ -83,7 +84,7 @@ def query_pool_owner(epoch_no):
                 ) AS innerq;""",
                 lambda x: x, lambda x: x)
 
-def query_pool_retire(epoch_no):
+def query_pool_retire(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -97,7 +98,7 @@ def query_pool_retire(epoch_no):
                 ||')' AS str
               FROM
               (SELECT pool_hash, retiring_epoch, epoch_no, cert_index, announced_tx_hash, slot_no, announced_txidx
-                 FROM `iog-data-analytics.cardano_mainnet.pool_retire` 
+                 FROM `{bq_project}.cardano_mainnet.pool_retire` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, slot_no, announced_txidx, pool_hash ASC))
             ) AS innerq;""",
@@ -121,7 +122,7 @@ def query_pool_retire(epoch_no):
                 ) AS innerq;""",
     lambda x: x, lambda x: x)
 
-def query_pool_update(epoch_no):
+def query_pool_update(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -141,7 +142,7 @@ def query_pool_update(epoch_no):
                 ||')' AS str
               FROM
               (SELECT active_epoch_no, pool_hash, cert_index, vrf_key_hash, pledge, reward_addr, margin, fixed_cost, registered_tx_hash, epoch_no, metadata_url, metadata_hash, metadata_registered_tx_hash
-                 FROM `iog-data-analytics.cardano_mainnet.pool_update` 
+                 FROM `{bq_project}.cardano_mainnet.pool_update` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, pool_hash, registered_tx_hash, cert_index ASC))
             ) AS innerq;""",

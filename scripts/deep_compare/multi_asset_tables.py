@@ -1,8 +1,10 @@
+import os
+
 def query_multi_asset_tables(epoch_no):
     return [query_ma_minting(epoch_no)]
 
 
-def query_ma_minting(epoch_no):
+def query_ma_minting(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return (
             f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                 (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
@@ -15,7 +17,7 @@ def query_ma_minting(epoch_no):
                        ||')' AS str
                   FROM
                   (SELECT fingerprint, policyid, name_bytes, epoch_no, minting
-                     FROM `iog-data-analytics.cardano_mainnet.ma_minting` 
+                     FROM `{bq_project}.cardano_mainnet.ma_minting` 
                      WHERE epoch_no = {epoch_no}
                      ORDER BY fingerprint ASC))
                 ) AS innerq;""",

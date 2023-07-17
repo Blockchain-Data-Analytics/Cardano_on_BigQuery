@@ -1,3 +1,5 @@
+import os
+
 def query_block_tables(epoch_no):
     return [
             query_block(epoch_no),
@@ -5,7 +7,7 @@ def query_block_tables(epoch_no):
     ]
 
 
-def query_block(epoch_no):
+def query_block(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -20,7 +22,7 @@ def query_block(epoch_no):
                 ||')' AS str
               FROM
               (SELECT epoch_no, slot_no, block_time, block_size, tx_count, sum_tx_fee, script_count, sum_script_size, pool_hash
-                 FROM `iog-data-analytics.cardano_mainnet.block` 
+                 FROM `{bq_project}.cardano_mainnet.block` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, slot_no ASC))
             ) AS innerq;""",
@@ -46,7 +48,7 @@ def query_block(epoch_no):
             lambda x: x, lambda x: x)
 
 
-def query_block_hash(epoch_no):
+def query_block_hash(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -56,7 +58,7 @@ def query_block_hash(epoch_no):
                 ||')' AS str
               FROM
               (SELECT epoch_no, slot_no, block_hash
-                 FROM `iog-data-analytics.cardano_mainnet.block_hash` 
+                 FROM `{bq_project}.cardano_mainnet.block_hash` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, slot_no ASC))
             ) AS innerq;""",

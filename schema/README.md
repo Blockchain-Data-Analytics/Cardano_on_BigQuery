@@ -6,7 +6,7 @@ In this folder you will find the schema for the tables and views of the Cardano 
 In the [tables](./tables) folder you will find the schema of the BigQuery tables in `json` format. You can use the BigQuery command line tool [bq](https://cloud.google.com/bigquery/docs/bq-command-line-tool) to create the tables.
 For example the command:
 ```shell
-bq mk --schema ./tables/schema_version.json iog-data-analytics:cardano_mainnet.schema_version
+bq mk --schema ./tables/schema_version.json <bq_project>:cardano_mainnet.schema_version
 ```
 would create the `schema_version` table.
 

@@ -2,6 +2,8 @@
 
 set -e
 
+source ./lib/config.bq
+
 DATE=$(date +"%s")
 CHECK=$((DATE / 86400 % 5 ))
 if [ $CHECK -ne 3 ]; then
@@ -19,9 +21,11 @@ export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
 export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
-export BQPROJECT=$(jq -r .project_id <<< "$BQ_CONFIG")
-echo $BQ_CONFIG > /usr/src/app/scripts/key.json
+# Overwrites the BQ_PROJECT env var 
+export BQ_PROJECT=$(jq -r .project_id <<< "$BQ_CONFIG")
+echo $BQ_CONFIG > ./key.json
 
 EPOCH_NO=$1
 python3 ./deep_compare/bq_pg_deep_compare.py $EPOCH_NO
 #aws sns publish --topic-arn $SNS_TOPIC_ARN --message file://msg.txt
+rm .key.json

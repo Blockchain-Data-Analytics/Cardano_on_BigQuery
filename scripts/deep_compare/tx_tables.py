@@ -1,3 +1,4 @@
+import os 
 import json
 import ast
 
@@ -14,7 +15,7 @@ def query_tx_tables(epoch_no, epoch_start_slot_no, epoch_end_slot_no):
             query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no)
     ]
 
-def query_tx(epoch_no):
+def query_tx(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT
@@ -36,7 +37,7 @@ def query_tx(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, tx_hash, block_time, slot_no, txidx, out_sum, fee, deposit, size, invalid_before, invalid_after, valid_script, script_size, count_inputs, count_outputs
-                         FROM `iog-data-analytics.cardano_mainnet.tx`
+                         FROM `{bq_project}.cardano_mainnet.tx`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, slot_no, txidx ASC))
                     ) AS innerq;""",
@@ -68,21 +69,21 @@ def query_tx(epoch_no):
                     ) AS innerq;""",
             lambda x: x, lambda x: x)
 
-def query_tx_in_out(epoch_no):
-    return  (f"""DROP TABLE IF EXISTS `iog-data-analytics.db_sync.tmp_tx_in_out`;
-                 CREATE TABLE `iog-data-analytics.db_sync.tmp_tx_in_out` AS 
+def query_tx_in_out(epoch_no, bq_project = os.environ['BQ_PROJECT']):
+    return  (f"""DROP TABLE IF EXISTS `{bq_project}.db_sync.tmp_tx_in_out`;
+                 CREATE TABLE `{bq_project}.db_sync.tmp_tx_in_out` AS 
                  (SELECT RANK() OVER(ORDER BY epoch_no, slot_no, txidx ASC) row_number, 
                  TO_BASE64(SHA256( '('||
                            (epoch_no||','||slot_no||','||txidx)
                            ||',' || TO_JSON_STRING(inputs)
                            ||',' || COALESCE(TO_JSON_STRING(outputs), 'null')
                            ||')')) AS hash_b64
-                         FROM `iog-data-analytics.cardano_mainnet.tx_in_out`
+                         FROM `{bq_project}.cardano_mainnet.tx_in_out`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, slot_no, txidx ASC);
                   SELECT TO_BASE64(SHA256(innerq.agg_hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(hash_b64, ',') AS agg_hash_b64 FROM
-                     `iog-data-analytics.db_sync.tmp_tx_in_out`
+                     `{bq_project}.db_sync.tmp_tx_in_out`
                     ) AS innerq;""",
              f"""WITH dat AS
                       (SELECT epoch_no, slot_no, txidx, inputs, outputs
@@ -102,7 +103,7 @@ def query_tx_in_out(epoch_no):
              lambda x: x, lambda x: x)
 
 
-def query_tx_hash(epoch_no):
+def query_tx_hash(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return  (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT
@@ -113,7 +114,7 @@ def query_tx_hash(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, slot_no, txidx, tx_hash
-                         FROM `iog-data-analytics.cardano_mainnet.tx_hash`
+                         FROM `{bq_project}.cardano_mainnet.tx_hash`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, slot_no, txidx ASC))
                     ) AS innerq;""",
@@ -136,7 +137,7 @@ def query_tx_hash(epoch_no):
              lambda x: x, lambda x: x)
 
 
-def query_rel_stake_txout(epoch_no):
+def query_rel_stake_txout(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return  (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT
@@ -146,7 +147,7 @@ def query_rel_stake_txout(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, address, outputs
-                         FROM `iog-data-analytics.cardano_mainnet.rel_stake_txout`
+                         FROM `{bq_project}.cardano_mainnet.rel_stake_txout`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, UPPER(address), JSON_VALUE(outputs[0].slot_no), JSON_VALUE(outputs[0].txidx), JSON_VALUE(outputs[0].idx) ASC))   -- BigQuery sorting is case sensitive compared to Postgres
                     ) AS innerq;""",
@@ -166,7 +167,7 @@ def query_rel_stake_txout(epoch_no):
                     ) AS innerq""",
              lambda x: x, lambda x: x)
 
-def query_rel_stake_hash(epoch_no):
+def query_rel_stake_hash(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return  (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT
@@ -177,7 +178,7 @@ def query_rel_stake_hash(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, slot_no, stake_address, stake_addr_hash
-                         FROM `iog-data-analytics.cardano_mainnet.rel_stake_hash`
+                         FROM `{bq_project}.cardano_mainnet.rel_stake_hash`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, slot_no, stake_address ASC))
                     ) AS innerq;""",
@@ -199,7 +200,7 @@ def query_rel_stake_hash(epoch_no):
              lambda x: x, lambda x: x)
 
 
-def query_rel_addr_txout(epoch_no):
+def query_rel_addr_txout(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return  (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT
@@ -209,7 +210,7 @@ def query_rel_addr_txout(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, address, outputs
-                         FROM `iog-data-analytics.cardano_mainnet.rel_addr_txout`
+                         FROM `{bq_project}.cardano_mainnet.rel_addr_txout`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, UPPER(address), CAST(JSON_VALUE(outputs[0].slot_no) AS INT64), CAST(JSON_VALUE(outputs[0].txidx) AS INT64), CAST(JSON_VALUE(outputs[0].idx) AS INT64) ASC))   -- BigQuery sorting is case sensitive compared to Postgres
                     ) AS innerq;""",
@@ -230,7 +231,7 @@ def query_rel_addr_txout(epoch_no):
              lambda x: x, lambda x: x)
 
 
-def query_collateral(epoch_no):
+def query_collateral(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT 
@@ -244,7 +245,7 @@ def query_collateral(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, slot_no, txidx, epoch_no_out, slot_no_out, txidx_out, tx_out_index	
-                         FROM `iog-data-analytics.cardano_mainnet.collateral`
+                         FROM `{bq_project}.cardano_mainnet.collateral`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, slot_no, txidx, epoch_no_out, slot_no_out, txidx_out, tx_out_index ASC))
                     ) AS innerq;""",
@@ -271,7 +272,7 @@ def query_collateral(epoch_no):
 
 
 # We excluded the metadata field as it can contain arbitrary fields that in BigQuery are stored alphabetically
-def query_tx_metadata(epoch_no):
+def query_tx_metadata(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT 
@@ -282,7 +283,7 @@ def query_tx_metadata(epoch_no):
                            ||')' AS str
                       FROM
                       (SELECT epoch_no, slot_no, txidx, tx_hash	
-                         FROM `iog-data-analytics.cardano_mainnet.tx_metadata`
+                         FROM `{bq_project}.cardano_mainnet.tx_metadata`
                          WHERE epoch_no = {epoch_no}
                          ORDER BY epoch_no, slot_no, txidx, tx_hash ASC))
                     ) AS innerq;""",
@@ -315,7 +316,7 @@ def query_tx_metadata(epoch_no):
                     ) AS innerq""",
         lambda x: x, lambda x: x)
 
-def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no):
+def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq0.hash_b64)) AS hash_b64 FROM
                     (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
                      (SELECT 
@@ -327,7 +328,7 @@ def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no):
                            ||')' AS str
                       FROM
                       (SELECT slot_no, txidx, `index`, consumed_in_slot_no, consumed_in_txidx	
-                         FROM `iog-data-analytics.cardano_mainnet.tx_consumed_output`
+                         FROM `{bq_project}.cardano_mainnet.tx_consumed_output`
                          WHERE consumed_in_slot_no >= {epoch_start_slot_no} AND consumed_in_slot_no <= {epoch_end_slot_no} AND mod(consumed_in_slot_no, 4) = 0
                          ORDER BY slot_no, txidx, `index` ASC))
                     ) AS innerq0
@@ -343,7 +344,7 @@ def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no):
                         ||')' AS str
                    FROM
                    (SELECT slot_no, txidx, `index`, consumed_in_slot_no, consumed_in_txidx	
-                      FROM `iog-data-analytics.cardano_mainnet.tx_consumed_output`
+                      FROM `{bq_project}.cardano_mainnet.tx_consumed_output`
                       WHERE consumed_in_slot_no >= {epoch_start_slot_no} AND consumed_in_slot_no <= {epoch_end_slot_no} AND mod(consumed_in_slot_no, 4) = 1
                       ORDER BY slot_no, txidx, `index` ASC))
                  ) AS innerq1
@@ -359,7 +360,7 @@ def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no):
                         ||')' AS str
                    FROM
                    (SELECT slot_no, txidx, `index`, consumed_in_slot_no, consumed_in_txidx	
-                      FROM `iog-data-analytics.cardano_mainnet.tx_consumed_output`
+                      FROM `{bq_project}.cardano_mainnet.tx_consumed_output`
                       WHERE consumed_in_slot_no >= {epoch_start_slot_no} AND consumed_in_slot_no <= {epoch_end_slot_no} AND mod(consumed_in_slot_no, 4) = 2
                       ORDER BY slot_no, txidx, `index` ASC))
                  ) AS innerq2
@@ -375,7 +376,7 @@ def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no):
                         ||')' AS str
                    FROM
                    (SELECT slot_no, txidx, `index`, consumed_in_slot_no, consumed_in_txidx	
-                      FROM `iog-data-analytics.cardano_mainnet.tx_consumed_output`
+                      FROM `{bq_project}.cardano_mainnet.tx_consumed_output`
                       WHERE consumed_in_slot_no >= {epoch_start_slot_no} AND consumed_in_slot_no <= {epoch_end_slot_no} AND mod(consumed_in_slot_no, 4) = 3
                       ORDER BY slot_no, txidx, `index` ASC))
                  ) AS innerq3

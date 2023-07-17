@@ -48,7 +48,7 @@ def get_pg(pg_conn, pg_query):
 
 
 def get_bq(creds, bq_query):
-    proj_id = os.environ['BQPROJECT']
+    proj_id = os.environ['BQ_PROJECT']
     df = pandas_gbq.read_gbq(bq_query, project_id=proj_id, location="europe-west6", credentials=creds)
     if 'invalid_after' in df.columns:
         df["invalid_after"] = pd.to_numeric(df["invalid_after"])
@@ -82,8 +82,8 @@ def get_epoch_end_slot(cur, epoch_no):
     except psycopg2.Error as e:
         print(f"Εrror retrieving epoch's start slot", e)
 
-def get_bq_max_slot(credentials):
-    df = get_bq(credentials, "SELECT MAX(slot_no) FROM `iog-data-analytics.cardano_mainnet.block`;")
+def get_bq_max_slot(credentials, bq_project = os.environ['BQ_PROJECT']):
+    df = get_bq(credentials, "SELECT MAX(slot_no) FROM `{bq_project}.cardano_mainnet.block`;")
     return df.iloc[0, 0]
 
 def log_deep_comparison(credentials, epoch_no, table_name0, tstart, tend, pg_query0, bq_query0, pg_hash0, bq_hash0):
@@ -103,7 +103,7 @@ def main():
     con = get_pg_connection()
     cur = con.cursor()
     credentials = service_account.Credentials.from_service_account_file(
-            '/usr/src/app/scripts/key.json',
+            '../key.json',
     )
     # read epoch number from argument if provided
     epoch_no = sys.argv[1] if len(sys.argv) == 2 else get_last_epoch(cur) - 1

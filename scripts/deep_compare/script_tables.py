@@ -1,3 +1,4 @@
+import os
 import json
 import base64
 
@@ -7,7 +8,7 @@ def query_script_tables(epoch_no):
             query_script(epoch_no)
     ]
     
-def query_redeemer(epoch_no):
+def query_redeemer(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -18,7 +19,7 @@ def query_redeemer(epoch_no):
                 ||')' AS str
               FROM
               (SELECT epoch_no, slot_no, txidx, count, redeemers
-                 FROM `iog-data-analytics.cardano_mainnet.redeemer` 
+                 FROM `{bq_project}.cardano_mainnet.redeemer` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, slot_no, txidx  ASC))
             ) AS innerq;""",
@@ -40,7 +41,7 @@ def query_redeemer(epoch_no):
             lambda x: x, lambda x: x)
 
 
-def query_script(epoch_no):
+def query_script(epoch_no, bq_project = os.environ['BQ_PROJECT']):
     return(f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
             (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
              (SELECT
@@ -55,7 +56,7 @@ def query_script(epoch_no):
                 ||')' AS str
               FROM
               (SELECT epoch_no, slot_no, txidx, script_hash, `type`, `json`, `bytes`, serialised_size
-                 FROM `iog-data-analytics.cardano_mainnet.script` 
+                 FROM `{bq_project}.cardano_mainnet.script` 
                  WHERE epoch_no = {epoch_no}
                  ORDER BY epoch_no, slot_no, txidx, script_hash ASC))
             ) AS innerq;""",

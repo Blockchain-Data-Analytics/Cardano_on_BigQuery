@@ -27,8 +27,8 @@ declare -a Tables=("tx" "tx_in_out" "tx_consumed_output" "tx_hash" "tx_metadata"
 for (( i=0; i<${#Tables[@]}; i++ ));
 do
   TABLE=${Tables[$i]}
-  TABLNAME="iog-data-analytics.cardano_mainnet.${TABLE}"
-  res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_slot_no FROM iog-data-analytics.db_sync.last_index where tablename = '${TABLNAME}'")
+  TABLNAME="${BQ_PROJECT}.cardano_mainnet.${TABLE}"
+  res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_slot_no FROM ${BQ_PROJECT}.db_sync.last_index where tablename = '${TABLNAME}'")
   STARTING_SLOT=$(echo ${res} | jq -r '.[0].last_slot_no')
   COUNT=0
   while [ "$COUNT" -lt 3 ] && [ "$STARTING_SLOT" -lt "$ENDING_SLOT_MINUS_GRACE" ]
@@ -37,12 +37,12 @@ do
     SCRIPT="./update_${TABLE}.sh"
     echo "Updating ${TABLNAME} since ${STARTING_SLOT} slot until ${ENDING_SLOT}"
     ${SCRIPT} ${STARTING_SLOT} ${ENDING_SLOT}
-    res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_slot_no FROM iog-data-analytics.db_sync.last_index where tablename = '${TABLNAME}'")
+    res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_slot_no FROM ${BQ_PROJECT}.db_sync.last_index where tablename = '${TABLNAME}'")
     STARTING_SLOT=$(echo ${res} | jq -r '.[0].last_slot_no')
     COUNT=$((COUNT + 1))
   done
 done
 echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"
-Q="UPDATE iog-data-analytics.db_sync.last_index set last_slot_no=${ENDING_SLOT}, last_epoch_no=${PG_EPOCH} WHERE tablename='db-sync';"
+Q="UPDATE ${BQ_PROJECT}.db_sync.last_index set last_slot_no=${ENDING_SLOT}, last_epoch_no=${PG_EPOCH} WHERE tablename='db-sync';"
 ${BQ} query --nouse_legacy_sql "${Q}"
 echo "All done."

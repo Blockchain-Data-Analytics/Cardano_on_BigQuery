@@ -40,7 +40,7 @@ echo "   from $CLEAN_SLOT_NO"
 # in the following we prepare the data in temporary tables in dataset "db_sync"
 # (not visible in the public schema)
 
-PROJECTID="iog-data-analytics"
+PROJECTID="${BQ_PROJECT}"
 SCHEMA="rel_addr_txout"
 SRCDATASET="db_sync"
 TARGETDATASET="cardano_mainnet"

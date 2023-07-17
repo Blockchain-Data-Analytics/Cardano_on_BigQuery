@@ -38,7 +38,7 @@ echo "   deleting from $CLEAN_SLOT_NO"
 CSVNAME="update_block-q1"
 if [ -e "${CSVNAME}.csv" ]; then rm -f "${CSVNAME}.csv"; fi
 SCHEMA="block"
-DATASETID="iog-data-analytics:db_sync"
+DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 delete slots 
 
@@ -55,8 +55,8 @@ if [ -z "${NREAD}" -o $NREAD -le 0 ]; then echo "Q: returned ${NREAD}."; (exit 1
 bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 
 # run the transaction
-SRCDATASET="iog-data-analytics.db_sync"
-TARGETTBL="iog-data-analytics.cardano_mainnet.block"
+SRCDATASET="${BQ_PROJECT}.db_sync"
+TARGETTBL="${BQ_PROJECT}.cardano_mainnet.block"
 Q="
    BEGIN TRANSACTION;
    -- 1 delete slots

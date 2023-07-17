@@ -9,7 +9,8 @@ export PGDATABASE_TESTNET=$(jq -r .dbname_test <<< "$DB_CONFIG")
 export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
 export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 
-source config.pg
+source ./lib/config.pg
+source ./lib/config.bq
 
 AWS_ACCESS_KEY_ID=`echo ${AWS_CONFIG} | jq '.aws_access_key_id' | sed -e 's/^"//' -e 's/"$//'`
 export AWS_ACCESS_KEY_ID
@@ -71,7 +72,7 @@ echo "postgres_slot ${PG_SLOT}" >> metrics.txt
 for (( i=0; i<${#TablesPerSlot[@]}; i++ ));
 do
   TABLE=${TablesPerSlot[$i]}
-  TABLNAME="iog-data-analytics.cardano_mainnet.${TABLE}"
+  TABLNAME="${BQ_PROJECT}.cardano_mainnet.${TABLE}"
   res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT max(slot_no) as max_slot_no, max(epoch_no) as max_epoch_no FROM ${TABLNAME}")
   BQ_SLOT=$(echo ${res} | jq -r '.[0].max_slot_no')
   BQ_EPOCH=$(echo ${res} | jq -r '.[0].max_epoch_no')
@@ -83,7 +84,7 @@ done
 for (( i=0; i<${#TablesPerEpoch[@]}; i++ ));
 do
   TABLE=${TablesPerEpoch[$i]}
-  TABLNAME="iog-data-analytics.cardano_mainnet.${TABLE}"
+  TABLNAME="${BQ_PROJECT}.cardano_mainnet.${TABLE}"
   res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT max(epoch_no) as max_epoch_no FROM ${TABLNAME}")
   BQ_EPOCH=$(echo ${res} | jq -r '.[0].max_epoch_no')
   echo "$TABLNAME @ $BQ_EPOCH epoch" >> msg.txt
@@ -93,7 +94,7 @@ done
 for (( i=0; i<${#TablesPerSlotOnly[@]}; i++ ));
 do
   TABLE=${TablesPerSlotOnly[$i]}
-  TABLNAME="iog-data-analytics.cardano_mainnet.${TABLE}"
+  TABLNAME="${BQ_PROJECT}.cardano_mainnet.${TABLE}"
   res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT max(slot_no) as max_slot_no FROM ${TABLNAME}")
   BQ_SLOT=$(echo ${res} | jq -r '.[0].max_slot_no')
   echo "$TABLNAME @ $BQ_SLOT slot" >> msg.txt

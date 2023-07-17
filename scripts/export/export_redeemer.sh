@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -14,4 +15,4 @@ function Q() {
 }
 
 # starting from epoch 290
-process_epoch_f Q "redeemer" "iog-data-analytics.db_sync" 290
+process_epoch_f Q "redeemer" "${BQ_PROJECT}.db_sync" 290

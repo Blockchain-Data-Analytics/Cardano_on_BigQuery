@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -14,4 +15,4 @@ function Q() {
 }
 
 # 209 is the first epoch with spendable rewards
-process_epoch_f Q "reward" "iog-data-analytics.db_sync" 209
+process_epoch_f Q "reward" "${BQ_PROJECT}.db_sync" 209

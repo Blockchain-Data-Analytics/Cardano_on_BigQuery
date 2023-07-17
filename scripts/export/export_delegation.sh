@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -15,4 +16,4 @@ function Q() {
 }
 
 # delegations started in epoch 208
-process_epoch_f Q "delegation" "iog-data-analytics.db_sync" 208
+process_epoch_f Q "delegation" "${BQ_PROJECT}.db_sync" 208

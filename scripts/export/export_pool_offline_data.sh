@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -25,4 +26,4 @@ function Q() {
 }
 
 # do the query only once
-process_epoch_f Q "pool_offline_data" "iog-data-analytics.db_sync" 99999
+process_epoch_f Q "pool_offline_data" "${BQ_PROJECT}.db_sync" 99999

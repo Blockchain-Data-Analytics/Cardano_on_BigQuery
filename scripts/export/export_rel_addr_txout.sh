@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -18,4 +19,4 @@ function transform_csv() {
     return 0
 }
 
-process_epoch_f Q "rel_addr_txout" "iog-data-analytics.db_sync" 0
+process_epoch_f Q "rel_addr_txout" "${BQ_PROJECT}.db_sync" 0

@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 function Q() {
       local EPOCH=$1
@@ -15,4 +16,4 @@ WHERE epoch_no = ${EPOCH}
 }
 
 # stake deregistration started in epoch 209
-process_epoch_f Q "stake_deregistration" "iog-data-analytics.db_sync" 209
+process_epoch_f Q "stake_deregistration" "${BQ_PROJECT}.db_sync" 209

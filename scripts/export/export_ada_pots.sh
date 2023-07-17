@@ -4,6 +4,7 @@ set -e
 
 source ../lib/config.pg
 source ../lib/functions.sh
+source ../lib/config.bq
 
 TNAME="ada_pots"
 
@@ -22,4 +23,4 @@ function Q() {
 }
 
 # do the query only once
-process_epoch_f Q "${TNAME}" "iog-data-analytics.db_sync" 99999
+process_epoch_f Q "${TNAME}" "${BQ_PROJECT}.db_sync" 99999

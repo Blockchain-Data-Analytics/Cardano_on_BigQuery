@@ -101,6 +101,7 @@ do
   echo "${TABLE}_slot $BQ_SLOT" >> metrics.txt
 done
 
+#aws s3 cp ./metrics.txt "$AWS_BUCKET_NAME/metrics.txt"
 #aws sns publish --topic-arn $SNS_TOPIC_ARN --message file://msg.txt
-aws s3 cp ./metrics.txt "$AWS_BUCKET_NAME/metrics.txt"
+rm ./key.json
 echo "all done."

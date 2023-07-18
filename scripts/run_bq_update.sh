@@ -14,8 +14,8 @@ source ./lib/config.pg
 source ./lib/config.bq
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
-echo $BQ_CONFIG > /usr/src/app/scripts/key.json
-gcloud auth activate-service-account $BQUSER --key-file /usr/src/app/scripts/key.json 
+echo $BQ_CONFIG > ./key.json
+gcloud auth activate-service-account $BQUSER --key-file ./key.json 
 ${BQ} ls
 
 res2=$(${PSQL} -c "SELECT max(slot_no) as max_slot, max(epoch_no) as max_epoch from public.block;")
@@ -46,4 +46,5 @@ done
 echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"
 Q="UPDATE ${BQ_PROJECT}.db_sync.last_index set last_slot_no=${ENDING_SLOT}, last_epoch_no=${PG_EPOCH} WHERE tablename='db-sync';"
 ${BQ} query --nouse_legacy_sql "${Q}"
+rm ./key.json
 echo "All done."

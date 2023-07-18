@@ -1,7 +1,7 @@
 --apilog=stdout
 --format=prettyjson
---location=europe-west6
---project_id=82823879527
+--location=europe-north1
+--project_id=971097289886
 --dataset_id=blockchain-analytics-392322:db_sync
 --headless=true
 --quiet=true

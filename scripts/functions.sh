@@ -10,7 +10,7 @@ function upload_csv() {
     local TARGETDATASET=$3
     local INPUTFILE="${TABLENAME}-${EPOCH}.csv"
     if [ ! -e "$INPUTFILE" ]; then echo "input file $INPUTFILE missing!"; (exit 1); fi
-    local SCHEMAFILE="./schema/${TABLENAME}.json"
+    local SCHEMAFILE="../schema/tables/${TABLENAME}.json"
     if [ ! -e "$SCHEMAFILE" ]; then echo "schema file $SCHEMAFILE missing!"; (exit 1); fi
     if [ -z "$BQ" ]; then echo "\$BQ undefined!"; (exit 1); fi
     if [ ! -e $(pwd)/dot.bigqueryrc ]; then echo "file dot.bigqueryrc missing!"; (exit 1); fi
@@ -100,7 +100,7 @@ function bq_load_csv() {
     local DATASET=$4
     local INPUTFILE="${CSVNAME}.csv"
     if [ ! -e "$INPUTFILE" ]; then echo "input file $INPUTFILE missing!"; (exit 1); fi
-    local SCHEMAFILE="./schema/${SCHEMA}.json"
+    local SCHEMAFILE="../schema/tables/${SCHEMA}.json"
     if [ ! -e "$SCHEMAFILE" ]; then echo "schema file $SCHEMAFILE missing!"; (exit 1); fi
     if [ -z "$BQ" ]; then echo "\$BQ undefined!"; (exit 1); fi
     if [ ! -e $(pwd)/dot.bigqueryrc ]; then echo "file dot.bigqueryrc missing!"; (exit 1); fi

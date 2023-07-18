@@ -9,8 +9,8 @@ export PGDATABASE_TESTNET=$(jq -r .dbname_test <<< "$DB_CONFIG")
 export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
 export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 
-source ./lib/config.pg
-source ./lib/config.bq
+source ./conf/config.pg
+source ./conf/config.bq
 
 AWS_ACCESS_KEY_ID=`echo ${AWS_CONFIG} | jq '.aws_access_key_id' | sed -e 's/^"//' -e 's/"$//'`
 export AWS_ACCESS_KEY_ID

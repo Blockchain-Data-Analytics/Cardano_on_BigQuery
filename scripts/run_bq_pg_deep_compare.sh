@@ -2,7 +2,7 @@
 
 set -e
 
-source ./lib/config.bq
+source ./conf/config.bq
 
 DATE=$(date +"%s")
 CHECK=$((DATE / 86400 % 5 ))

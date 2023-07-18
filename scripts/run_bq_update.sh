@@ -10,8 +10,8 @@ export PGDATABASE_TESTNET=$(jq -r .dbname_test <<< "$DB_CONFIG")
 export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
 export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 
-source ./lib/config.pg
-source ./lib/config.bq
+source ./conf/config.pg
+source ./conf/config.bq
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
 echo $BQ_CONFIG > ./key.json

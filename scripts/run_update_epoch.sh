@@ -22,7 +22,6 @@ declare -a Tables=("epoch_param" "ada_pots" "param_proposal" "ma_minting" "pool_
 # use for loop to read all tables
 for (( i=0; i<${#Tables[@]}; i++ ));
 do
-  cd ./update
   TABLE=${Tables[$i]}
   TABLNAME="${BQ_PROJECT}.cardano_mainnet.${TABLE}"
   res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_epoch_no FROM ${BQ_PROJECT}.db_sync.last_index where tablename = '${TABLNAME}'")
@@ -37,5 +36,4 @@ do
     echo "Updating ${TABLNAME}. BigQuery epoch: ${BQ_EPOCH_NO} - Postgres epoch: ${PG_EPOCH_NO}"
     ${SCRIPT} ${BQ_EPOCH_NO} ${PG_EPOCH_NO}
   fi
-  cd ../
 done

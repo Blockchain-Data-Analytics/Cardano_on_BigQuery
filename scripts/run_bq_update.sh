@@ -34,6 +34,7 @@ do
   COUNT=0
   while [ "$COUNT" -lt 3 ] && [ "$STARTING_SLOT" -lt "$ENDING_SLOT_MINUS_GRACE" ]
   do
+    cd ./update
     STARTING_SLOT=$(echo ${res} | jq -r '.[0].last_slot_no')
     SCRIPT="./update_${TABLE}.sh"
     echo "Updating ${TABLNAME} since ${STARTING_SLOT} slot until ${ENDING_SLOT}"
@@ -41,6 +42,7 @@ do
     res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_slot_no FROM ${BQ_PROJECT}.db_sync.last_index where tablename = '${TABLNAME}'")
     STARTING_SLOT=$(echo ${res} | jq -r '.[0].last_slot_no')
     COUNT=$((COUNT + 1))
+    cd ../
   done
 done
 echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"

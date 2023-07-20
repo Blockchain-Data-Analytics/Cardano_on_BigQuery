@@ -13,6 +13,7 @@ export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 source ./conf/config.pg
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
+export BQ_PROJECT=$(jq -r .project_id <<< "$BQ_CONFIG")
 echo $BQ_CONFIG > ./key.json
 gcloud auth activate-service-account $BQUSER --key-file ./key.json 
 ${BQ} ls

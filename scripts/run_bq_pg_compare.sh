@@ -12,13 +12,6 @@ export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 source ./conf/config.pg
 source ./conf/config.bq
 
-AWS_ACCESS_KEY_ID=`echo ${AWS_CONFIG} | jq '.aws_access_key_id' | sed -e 's/^"//' -e 's/"$//'`
-export AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY=`echo ${AWS_CONFIG} | jq '.aws_secret_access_key' | sed -e 's/^"//' -e 's/"$//'`
-export AWS_SECRET_ACCESS_KEY
-AWS_BUCKET_NAME=$(jq -r .aws_s3_bucket_bq_pg_compare <<< "$AWS_CONFIG")
-export AWS_BUCKET_NAME
-
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
 echo $BQ_CONFIG > ./key.json
 gcloud auth activate-service-account $BQUSER --key-file ./key.json 
@@ -102,6 +95,6 @@ do
 done
 
 #aws s3 cp ./metrics.txt "$AWS_BUCKET_NAME/metrics.txt"
-#aws sns publish --topic-arn $SNS_TOPIC_ARN --message file://msg.txt
+gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "$(cat ${msg.txt})"
 rm ./key.json
 echo "all done."

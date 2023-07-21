@@ -95,6 +95,6 @@ do
 done
 
 #aws s3 cp ./metrics.txt "$AWS_BUCKET_NAME/metrics.txt"
-gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "$(cat ${msg.txt})"
+gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "$(cat msg.txt)" --project $BQ_PROJECT
 rm ./key.json
 echo "all done."

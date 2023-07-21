@@ -21,8 +21,6 @@ export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
 export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
-# Overwrites the BQ_PROJECT env var 
-export BQ_PROJECT=$(jq -r .project_id <<< "$BQ_CONFIG")
 echo $BQ_CONFIG > ./key.json
 
 EPOCH_NO=$1

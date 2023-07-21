@@ -7,3 +7,4 @@ export DELETE_SLOTS=600
 export CAP_SLOTS=10000
 
 export BQ_PROJECT=blockchain-analytics-392322
+export BQ_REGION=europe-north1

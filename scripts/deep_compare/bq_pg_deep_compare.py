@@ -49,7 +49,8 @@ def get_pg(pg_conn, pg_query):
 
 def get_bq(creds, bq_query):
     proj_id = os.environ['BQ_PROJECT']
-    df = pandas_gbq.read_gbq(bq_query, project_id=proj_id, location="europe-west6", credentials=creds)
+    location = os.environ['BQ_REGION']
+    df = pandas_gbq.read_gbq(bq_query, project_id=proj_id, location=location, credentials=creds)
     if 'invalid_after' in df.columns:
         df["invalid_after"] = pd.to_numeric(df["invalid_after"])
     if 'monetary_expand_rate' in df.columns:
@@ -102,8 +103,11 @@ def log_deep_comparison(credentials, epoch_no, table_name0, tstart, tend, pg_que
 def main():
     con = get_pg_connection()
     cur = con.cursor()
+    current_script_path = os.path.abspath(__file__)
+    parent_directory = os.path.dirname(os.path.dirname(current_script_path))
+    keyfile_path = f"{parent_directory}/key.json"
     credentials = service_account.Credentials.from_service_account_file(
-            '../key.json',
+            keyfile_path,
     )
     # read epoch number from argument if provided
     epoch_no = sys.argv[1] if len(sys.argv) == 2 else get_last_epoch(cur) - 1

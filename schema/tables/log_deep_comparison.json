@@ -1,0 +1,50 @@
+[
+  {
+    "description": "epoch number",
+    "name": "epoch_no",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "database table's name",
+    "name": "table_name",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "start time",
+    "name": "start_time",
+    "type": "DATETIME",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "end time",
+    "name": "end_time",
+    "type": "DATETIME",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "query on Postgres",
+    "name": "pg_query",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "query on BigQuery",
+    "name": "bq_query",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "hash from computation on Postgres",
+    "name": "pg_hash",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "hash from computation on BigQuery",
+    "name": "bq_hash",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  }
+]

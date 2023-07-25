@@ -154,7 +154,7 @@ def query_rel_stake_txout(epoch_no, bq_project = os.environ['BQ_PROJECT']):
              f"""WITH dat AS
                       (SELECT epoch_no, address, outputs
                        FROM analytics.vw_bq_rel_stake_txout({epoch_no})
-                       ORDER BY epoch_no, address, (outputs->0->>'slot_no')::integer, (outputs->0->>'txidx')::integer, (outputs->0->>'idx')::integer ASC)  
+                       ORDER BY epoch_no, UPPER(address), (outputs->0->>'slot_no')::integer, (outputs->0->>'txidx')::integer, (outputs->0->>'idx')::integer ASC)  
                     
                     SELECT encode(SHA256(innerq.hash_b64),'base64') AS hash_b64 FROM
                     (SELECT STRING_AGG(encode(SHA256(regexp_replace(regexp_replace(subq.str, '[\n]', '', 'g'), '[\s]', '', 'g')::bytea),'base64'), ',')::bytea AS hash_b64 FROM
@@ -217,7 +217,7 @@ def query_rel_addr_txout(epoch_no, bq_project = os.environ['BQ_PROJECT']):
              f"""WITH dat AS
                       (SELECT epoch_no, address, outputs
                        FROM analytics.vw_bq_rel_addr_txout({epoch_no})
-                       ORDER BY epoch_no, address, (outputs->0->>'slot_no')::integer, (outputs->0->>'txidx')::integer, (outputs->0->>'idx')::integer ASC)
+                       ORDER BY epoch_no, UPPER(address), (outputs->0->>'slot_no')::integer, (outputs->0->>'txidx')::integer, (outputs->0->>'idx')::integer ASC)
                     
                     SELECT encode(SHA256(innerq.hash_b64),'base64') AS hash_b64 FROM
                     (SELECT STRING_AGG(encode(SHA256(regexp_replace(regexp_replace(subq.str, '[\n]', '', 'g'), '[\s]', '', 'g')::bytea),'base64'), ',')::bytea AS hash_b64 FROM

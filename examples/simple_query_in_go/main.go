@@ -33,7 +33,7 @@ func main() {
 	ctx := context.Background()
 
 	// the GCP/BigQuery project id
-	projectID := "iog-data-analytics"
+	projectID := "blockchain-analytics-392322"
 
 	bqclient, err := bigquery.NewClient(ctx, projectID)
 	if err != nil { log.Fatalf("bigquery.NewClient: %v", err) }

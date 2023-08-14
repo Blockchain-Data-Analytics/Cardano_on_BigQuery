@@ -1,2 +1,5 @@
 *.csv
 logs/
+msg.txt
+deep_compare/__pycache__
+upload.all

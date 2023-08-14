@@ -9,13 +9,16 @@ export PGDATABASE=$(jq -r .dbname <<< "$DB_CONFIG")
 export PGDATABASE_TESTNET=$(jq -r .dbname_test <<< "$DB_CONFIG")
 export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
 export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
+ 
+BASEDIR=$(realpath $(dirname $0))
+TEMPDIR=$(mktemp -d)
 
-source ./conf/config.pg
+source ${BASEDIR}/conf/config.pg
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
 export BQ_PROJECT=$(jq -r .project_id <<< "$BQ_CONFIG")
-echo $BQ_CONFIG > ./key.json
-gcloud auth activate-service-account $BQUSER --key-file ./key.json 
+echo $BQ_CONFIG > ${TEMPDIR}/key.json
+gcloud auth activate-service-account $BQUSER --key-file ${TEMPDIR}/key.json 
 ${BQ} ls
 
 declare -a Tables=("epoch_param" "ada_pots" "param_proposal" "ma_minting" "pool_update" "pool_offline_data" "delegation" "reward" "rel_addr_txout" "rel_stake_txout" )
@@ -38,3 +41,11 @@ do
     ${SCRIPT} ${BQ_EPOCH_NO} ${PG_EPOCH_NO}
   fi
 done
+
+rm ${TEMPDIR}/key.json
+rmdir ${TEMPDIR}
+
+gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "Updated BQ epoch tables to epoch_no ${PG_EPOCH_NO}" --project $BQ_PROJECT
+
+echo "All done."
+

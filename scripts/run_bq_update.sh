@@ -3,19 +3,15 @@
 
 set -e
 
-export PGPASSWORD=$(jq -r .password <<< "$DB_CONFIG")
-export PGHOST=$(jq -r .host <<< "$DB_CONFIG")
-export PGDATABASE=$(jq -r .dbname <<< "$DB_CONFIG")
-export PGDATABASE_TESTNET=$(jq -r .dbname_test <<< "$DB_CONFIG")
-export PGPORT=$(jq -r .port <<< "$DB_CONFIG")
-export PGUSER=$(jq -r .username <<< "$DB_CONFIG")
+BASEDIR=$(realpath $(dirname $0))
+TEMPDIR=$(mktemp -d)
 
-source ./conf/config.pg
-source ./conf/config.bq
+source ${BASEDIR}/conf/config.pg
+source ${BASEDIR}/conf/config.bq
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
-echo $BQ_CONFIG > ./key.json
-gcloud auth activate-service-account $BQUSER --key-file ./key.json 
+echo $BQ_CONFIG > ${TEMPDIR}/key.json
+gcloud auth activate-service-account $BQUSER --key-file ${TEMPDIR}/key.json 
 ${BQ} ls
 
 res2=$(${PSQL} -c "SELECT max(slot_no) as max_slot, max(epoch_no) as max_epoch from public.block;")
@@ -46,5 +42,10 @@ done
 echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"
 Q="UPDATE ${BQ_PROJECT}.db_sync.last_index set last_slot_no=${ENDING_SLOT}, last_epoch_no=${PG_EPOCH} WHERE tablename='db-sync';"
 ${BQ} query --nouse_legacy_sql "${Q}"
-rm ./key.json
+
+rm ${TEMPDIR}/key.json
+rmdir ${TEMPDIR}
+
+gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "Updated BQ tables up to slot_no ${ENDING_SLOT} and epoch_no to ${PG_EPOCH}" --project $BQ_PROJECT
+
 echo "All done."

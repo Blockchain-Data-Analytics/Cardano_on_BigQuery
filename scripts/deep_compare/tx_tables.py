@@ -149,7 +149,7 @@ def query_rel_stake_txout(epoch_no, bq_project = os.environ['BQ_PROJECT']):
                       (SELECT epoch_no, address, outputs
                          FROM `{bq_project}.cardano_mainnet.rel_stake_txout`
                          WHERE epoch_no = {epoch_no}
-                         ORDER BY epoch_no, UPPER(address), JSON_VALUE(outputs[0].slot_no), JSON_VALUE(outputs[0].txidx), JSON_VALUE(outputs[0].idx) ASC))   -- BigQuery sorting is case sensitive compared to Postgres
+                         ORDER BY epoch_no, UPPER(address), CAST(JSON_VALUE(outputs[0].slot_no) AS int64), CAST(JSON_VALUE(outputs[0].txidx) AS int64), CAST(JSON_VALUE(outputs[0].idx) AS int64) ASC ))
                     ) AS innerq;""",
              f"""WITH dat AS
                       (SELECT epoch_no, address, outputs

@@ -1,7 +1,9 @@
 
-# export the data from Postgres to BigQuery every two hours
+# periodically update from Pg to Bq
 03 */2 * * * bash -l -c "nix-shell --run 'cd /home/bq/Cardano_on_BigQuery.git/scripts/ && ./run_bq_update.sh'"
 
-# run the update of the epoch tables every 5 days at 05:16
+# update epoch tables after every epoch boundary
 16 5 * * * bash -l -c "(( $(date +'\%s') / 86400 \% 5 == 3 )) && nix-shell --run 'cd /home/bq/Cardano_on_BigQuery.git/scripts/ && ./run_update_epoch.sh'"
 
+# deep comparison after every epoch boundary
+15 8 * * * bash -l -c "(( $(date +'\%s') / 86400 \% 5 == 3 )) && nix-shell --run 'cd /home/bq/Cardano_on_BigQuery.git/scripts/ && ./run_bq_pg_deep_compare.sh'"

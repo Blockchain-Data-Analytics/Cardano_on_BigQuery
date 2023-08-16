@@ -38,7 +38,7 @@ BEGIN
                    ) as outputs
         FROM dat
         GROUP BY _epoch_no, _address, cluster_no
-        ORDER BY _epoch_no, _address ASC;
+        ORDER BY _epoch_no, _address, cluster_no ASC;
 END;
 $BODY$;
 

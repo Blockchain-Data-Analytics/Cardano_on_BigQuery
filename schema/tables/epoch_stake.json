@@ -1,0 +1,26 @@
+[
+  {
+    "description": "The epoch number.",
+    "name": "epoch_no",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "The hash identifier of the stake address.",
+    "name": "stake_addr_hash",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "The hash of the pool that this entry is delegated to.",
+    "name": "pool_hash",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "description": "The amount (in Lovelace) being staked.",
+    "name": "amount",
+    "type": "NUMERIC",
+    "mode": "REQUIRED"
+  }
+]

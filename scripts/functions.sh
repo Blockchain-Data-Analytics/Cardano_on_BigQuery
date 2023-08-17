@@ -36,6 +36,7 @@ function upload_csv() {
 
     rm -v "${INPUTFILE}"
     rm -v upload.all
+    echo "upload into ${TARGETDATASET}.${TABLENAME} for epoch ${EPOCH} done."
 }
 
 # copy data from temp table to real table (in target dataset)
@@ -83,9 +84,10 @@ function pg_query_to_csv() {
     rm ./${OUTNAME}.csv0
     # if transformation procedure is defined, run it
     case $(type -t transform_csv) in
-      function) echo "transforming CSV ${OUTNAME}.csv with function 'transform_csv'" >>/dev/stderr
+      function) #echo "transforming CSV ${OUTNAME}.csv with function 'transform_csv'" >>/dev/stderr
 	        transform_csv ${OUTNAME}.csv ;;
-	     *) echo "no function 'transform_csv' defined" >>/dev/stderr ;;
+	     *) #echo "no function 'transform_csv' defined" >>/dev/stderr ;;
+                ;;
     esac
 
     echo ${res} | ${SED} -ne "s/.*COPY \\([0-9]\\+\\)/\\1/p"

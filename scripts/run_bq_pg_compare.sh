@@ -26,7 +26,7 @@ declare -a TablesPerEpoch=(
 		"param_proposal"
 		"pool_offline_data"
 		"pool_update"
-    "rel_addr_txout"
+                "rel_addr_txout"
 		"rel_stake_txout"
 		"reward"
 	   )

@@ -7,7 +7,7 @@ fi
 
 set -e
 
-source config.pg
+source ./config/config.pg
 source functions.sh
 
 TNAME="epoch_stake"
@@ -30,7 +30,7 @@ fi
 CSVNAME="update_epoch_stake-q1"
 if [ -e "${CSVNAME}.csv" ]; then rm -f "${CSVNAME}.csv"; fi
 SCHEMA="epoch_stake"
-DATASETID="iog-data-analytics:db_sync"
+DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert epoch into table: tmp_epoch_stake_1
 TMPTBL="tmp_epoch_stake_1"
@@ -43,7 +43,7 @@ Q="
   WHERE epoch_no = ${EPOCH_NO}"
 NREAD=$(pg_query_to_csv "${Q}" "$CSVNAME")
 
-TARGETTBL="iog-data-analytics.cardano_mainnet.${TNAME}"
+TARGETTBL="${BQ_PROJECT}.cardano_mainnet.${TNAME}"
 
 #DRYRUN="--dry_run"
 DRYRUN=
@@ -65,7 +65,7 @@ fi
 bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 
 # run the transaction
-SRCDATASET="iog-data-analytics.db_sync"
+SRCDATASET="${BQ_PROJECT}.db_sync"
 Q="
    BEGIN TRANSACTION;
    -- 1 insert new epoch

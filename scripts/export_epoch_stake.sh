@@ -2,7 +2,8 @@
 
 set -e
 
-source config.pg
+source ./conf/config.bq
+source ./conf/config.pg
 source functions.sh
 
 function Q() {
@@ -18,4 +19,4 @@ function Q() {
 }
 
 # epoch_stake started in epoch 210
-process_epoch_f Q "epoch_stake" "iog-data-analytics.db_sync" 210
+process_epoch_f Q "epoch_stake" "${BQ_PROJECT}.db_sync" 210

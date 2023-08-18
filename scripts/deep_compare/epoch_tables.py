@@ -4,7 +4,9 @@ import pandas as pd
 def query_epoch_tables(epoch_no):
     return [
             query_epoch_param(epoch_no),
-            query_param_proposal(epoch_no)
+            query_param_proposal(epoch_no),
+            query_ada_pots(epoch_no),
+            query_epoch_stake(epoch_no)
     ]
 
 
@@ -158,4 +160,60 @@ def query_param_proposal(epoch_no):
                        ||',' || (registered_tx_index)  
                        ||')' AS str
                       FROM analytics.vw_bq_param_proposal WHERE epoch_no = {epoch_no}) AS subq""",
+            lambda x: x, lambda x: x)
+
+
+def query_ada_pots(epoch_no):
+    return (f"""SELECT TO_BASE64(SHA256(innerq.str)) AS hash_b64 FROM
+                 (SELECT
+                    '('|| (epoch_no)
+                       ||',' || (slot_no)
+                       ||',' || (treasury)
+                       ||',' || (reserves)
+                       ||',' || (rewards)
+                       ||',' || (utxo)
+                       ||',' || (deposits)
+                       ||',' || (fees)
+                       ||')' AS str
+                  FROM cardano_mainnet.ada_pots
+                  WHERE epoch_no = {epoch_no}
+                ) AS innerq;""",
+            f"""SELECT encode(SHA256(subq.str::bytea),'base64') AS hash_b64 FROM
+                    (SELECT 
+                    '('|| (epoch_no)
+                       ||',' || (slot_no)
+                       ||',' || (treasury)
+                       ||',' || (reserves)
+                       ||',' || (rewards)
+                       ||',' || (utxo)
+                       ||',' || (deposits)
+                       ||',' || (fees)
+                       ||')' AS str
+                      FROM public.ada_pots WHERE epoch_no = {epoch_no}) AS subq""",
+            lambda x: x, lambda x: x)
+
+
+def query_epoch_stake(epoch_no):
+    return (f"""SELECT TO_BASE64(SHA256(innerq.hash_b64)) AS hash_b64 FROM
+                (SELECT STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
+                (SELECT
+                '('|| (epoch_no)
+                ||',' || (stake_addr_hash)
+                ||',' || (pool_hash)
+                ||',' || (amount)
+                ||')' AS str
+                FROM cardano_mainnet.epoch_stake
+                WHERE epoch_no = {epoch_no}
+                ORDER BY epoch_no, stake_addr_hash, pool_hash ASC))
+                AS innerq;""",
+            f"""SELECT encode(SHA256(innerq.hash_b64),'base64') AS hash_b64 FROM
+                (SELECT STRING_AGG(encode(SHA256(subq.str::bytea),'base64'), ',')::bytea AS hash_b64 FROM
+                (SELECT
+                '('|| (epoch_no)
+                ||',' || (stake_addr_hash)
+                ||',' || (pool_hash)
+                ||',' || (amount)
+                ||')' AS str
+                FROM analytics.vw_bq_epoch_stake WHERE epoch_no = {epoch_no}) AS subq
+                ) AS innerq;""",
             lambda x: x, lambda x: x)

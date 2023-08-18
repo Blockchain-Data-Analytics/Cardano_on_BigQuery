@@ -20,6 +20,7 @@ ${BQ} ls
 declare -a TablesPerEpoch=(
 		"delegation"
 		"epoch_param"
+		"epoch_stake"
 		"ada_pots"
 		"ma_minting"
 		"param_proposal"

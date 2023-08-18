@@ -7,7 +7,7 @@ fi
 
 set -e
 
-source ./config/config.pg
+source ./conf/config.pg
 source functions.sh
 
 TNAME="epoch_stake"

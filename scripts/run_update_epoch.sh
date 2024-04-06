@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # this script expects environment variables $BQ_CONFIG and $DB_CONFIG to be set beforehand
 
 set -e

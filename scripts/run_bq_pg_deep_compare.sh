@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -26,4 +26,3 @@ fi
 python3 ./deep_compare/bq_pg_deep_compare.py $EPOCH_NO
 gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "$(cat msg.txt)" --project $BQ_PROJECT
 rm ./key.json
-

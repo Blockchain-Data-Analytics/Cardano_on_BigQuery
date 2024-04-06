@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -9,7 +9,7 @@ DATE=$(date +"%s")
 CHECK=$((DATE / 86400 % 5 ))
 if [ $CHECK -ne 3 ]; then
     echo "Not an epoch boundary. Exiting..."
-#    exit 0
+    exit 0
 else
     echo "Epoch boundary, running BQ/PG deep comparison"
 fi
@@ -26,4 +26,3 @@ fi
 python3 ./deep_compare/bq_pg_deep_compare.py $EPOCH_NO
 gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "$(cat msg.txt)" --project $BQ_PROJECT
 rm ./key.json
-

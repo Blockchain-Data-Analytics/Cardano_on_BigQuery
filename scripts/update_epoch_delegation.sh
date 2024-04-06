@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# -lt 2 ]; then
 	echo "$0 bq_epoch_no pg_epoch_no"

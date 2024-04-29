@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # sleep between queries (in seconds)
 SLEEPTIME=3

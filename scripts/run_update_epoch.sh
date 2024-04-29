@@ -1,7 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # this script expects environment variables $BQ_CONFIG and $DB_CONFIG to be set beforehand
 
 set -e
+
+DATE=$(date +"%s")
+CHECK=$((DATE / 86400 % 5 ))
+if [ $CHECK -ne 3 ]; then
+    echo "Not an epoch boundary. Exiting..."
+    exit 0
+else
+    echo "Epoch boundary, running epoch update"
+fi
 
 export PGPASSWORD=$(jq -r .password <<< "$DB_CONFIG")
 export PGHOST=$(jq -r .host <<< "$DB_CONFIG")

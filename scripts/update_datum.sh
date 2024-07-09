@@ -52,6 +52,7 @@ TARGETTBL="${PROJECTID}.${TARGETDATASET}.${SCHEMA}"
 function transform_csv() {
 	local FNAME=$1
     $SED -i -e ':a /",/ { bb; }; /,"[^"]\+$/ { N; s/\n//g; ba; }; :b' ${FNAME}
+    python3 fix_big_json_numbers.py -f ${FNAME} -i 5 >> /dev/stderr
     return 0
 }
 

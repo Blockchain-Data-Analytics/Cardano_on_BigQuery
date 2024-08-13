@@ -2,6 +2,7 @@ import csv, sys
 import json
 import tempfile
 import os
+import datetime
 
 def main():
     args = ParseArgs()
@@ -13,9 +14,11 @@ def main():
         writer = csv.writer(temp_file)
         # Read the input file and process each row
         with open(input_file, mode='r', newline='') as infile:
+            print(f"{datetime.datetime.now()}: Processing file: {input_file}")
             reader = csv.reader(infile)
             fix_json_numbers(reader, writer, json_field_idx, max_digits)
             os.replace(temp_file.name, input_file)
+            print(f"{datetime.datetime.now()}: File processed successfully")
 
 
 def process_json_field(json_field, max_digits=15):
@@ -23,6 +26,7 @@ def process_json_field(json_field, max_digits=15):
         if isinstance(obj, dict):
             for key, value in obj.items():
                 if key == "int" and isinstance(value, int) and len(str(value)) > max_digits:
+                    print(f"Wrapping large number: {value}")
                     obj[key] = str(value)
                 else:
                     wrap_large_numbers(value)

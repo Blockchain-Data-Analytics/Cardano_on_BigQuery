@@ -14,7 +14,7 @@ function Q() {
         echo "
   SELECT epoch_no, slot_no,
          treasury, reserves, rewards, utxo,
-         deposits, fees
+         deposits_stake, fees
   FROM public.${TNAME}
         "
       else

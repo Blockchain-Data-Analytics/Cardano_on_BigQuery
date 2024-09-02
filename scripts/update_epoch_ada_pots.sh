@@ -37,7 +37,7 @@ TMPTBL="tmp_${TNAME}_1"
 Q="
   SELECT epoch_no, slot_no,
          treasury, reserves, rewards, utxo,
-         deposits, fees
+         deposits_stake, fees
   FROM public.${TNAME}
   WHERE epoch_no = ${EPOCH_NO}"
 NREAD=$(pg_query_to_csv "${Q}" "$CSVNAME")

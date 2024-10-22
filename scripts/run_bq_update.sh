@@ -8,6 +8,9 @@ TEMPDIR=$(mktemp -d)
 
 source ${BASEDIR}/conf/config.pg
 source ${BASEDIR}/conf/config.bq
+echo $BASEDIR
+echo $TEMPDIR
+echo $(which bash)
 
 export BQUSER=$(jq -r .client_email <<< "$BQ_CONFIG")
 echo $BQ_CONFIG > ${TEMPDIR}/key.json
@@ -19,7 +22,7 @@ ENDING_SLOT=$(echo ${res2} | ${SED} -ne 's/^max_slot | max_epoch --*+--* \([0-9]
 PG_EPOCH=$(echo ${res2} | ${SED} -ne 's/^max_slot | max_epoch --*+--* \([0-9][0-9]*\) | \([0-9][0-9]*\).*/\2/p;')
 ENDING_SLOT_MINUS_GRACE=$((ENDING_SLOT - GRACE_SLOTS))
 
-declare -a Tables=("tx" "tx_in_out" "tx_consumed_output" "tx_hash" "tx_metadata" "block" "block_hash" "rel_addr_txout" "rel_stake_txout" "rel_stake_hash" "collateral" "ma_minting" "script" "pool_offline_data" "pool_owner" "pool_retire" "pool_update" "redeemer" "stake_registration" "stake_deregistration" "withdrawal" "delegation" "datum")
+declare -a Tables=("tx" "tx_in_out" "tx_consumed_output" "tx_hash" "tx_metadata" "block" "block_hash" "rel_addr_txout" "rel_stake_txout" "rel_stake_hash" "collateral" "ma_minting" "script" "pool_offline_data" "pool_owner" "pool_retire" "pool_update" "redeemer" "stake_registration" "stake_deregistration" "withdrawal" "delegation" "datum" )
 # use for loop to read all tables
 for (( i=0; i<${#Tables[@]}; i++ ));
 do

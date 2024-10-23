@@ -8,6 +8,7 @@ fi
 set -e
 
 source ./conf/config.pg
+source ./conf/config.bq
 source ./functions.sh
 
 TNAME="pool_offline_data"

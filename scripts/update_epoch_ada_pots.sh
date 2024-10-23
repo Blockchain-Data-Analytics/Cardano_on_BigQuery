@@ -8,6 +8,7 @@ fi
 set -e
 
 source ./conf/config.pg
+source ./conf/config.bq
 source ./functions.sh
 
 TNAME="ada_pots"
@@ -47,16 +48,12 @@ TARGETTBL="${BQ_PROJECT}.cardano_mainnet.${TNAME}"
 #DRYRUN="--dry_run"
 DRYRUN=
 
-if [ -z "${NREAD}" -o $NREAD -lt 0 ]
-then 
+if [[ -z "${NREAD}" || "${NREAD}" -le 0 ]]; then
   echo "Q: returned ${NREAD}."; 
   exit 1;
-elif [ $NREAD -eq 0 ]
-then
+elif [ $NREAD -eq 0 ]; then
   echo "Q: returned ${NREAD}. Updating last index."; 
-  Q="
-   -- update the last index table
-   UPDATE db_sync.last_index set last_epoch_no=${EPOCH_NO} WHERE tablename='${TARGETTBL}';"
+  Q="UPDATE db_sync.last_index set last_epoch_no=${EPOCH_NO} WHERE tablename='${TARGETTBL}';"
   ${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/update_${TNAME}-query1.err > logs/update_${TNAME}-query1.out
   echo "index updated to epoch: ${EPOCH_NO}"
   exit 0;

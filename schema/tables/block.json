@@ -52,5 +52,11 @@
   "name": "pool_hash",
   "type": "STRING",
   "mode": "NULLABLE"
+},
+{
+  "description": "The hash identifier of the block.",
+  "name": "block_hash",
+  "type": "STRING",
+  "mode": "REQUIRED"
 }
 ]

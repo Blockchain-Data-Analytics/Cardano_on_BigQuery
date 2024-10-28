@@ -36,22 +36,7 @@ DATASETID="${BQ_PROJECT}:db_sync"
 ## 1 insert epoch into table: tmp_epoch_param_1
 TMPTBL="tmp_epoch_param_1"
 Q="
-    SELECT epoch_no, min_fee_a, min_fee_b,
-         max_block_size, max_tx_size, max_bh_size,
-         key_deposit, pool_deposit, max_epoch,
-         optimal_pool_count, influence, 
-         monetary_expand_rate, treasury_growth_rate,
-         decentralisation,
-         extra_entropy,
-         protocol_major, protocol_minor,
-         min_utxo_value, min_pool_cost,
-         nonce,
-         coins_per_utxo_size, cost_model,
-         price_mem, price_step,
-         max_tx_ex_mem, max_tx_ex_steps,
-         max_block_ex_mem, max_block_ex_steps,
-         max_val_size,
-         collateral_percent, max_collateral_inputs
+    SELECT epoch_no, params
   FROM analytics.vw_bq_epoch_param
   WHERE epoch_no = ${EPOCH_NO}"
 NREAD=$(pg_query_to_csv "${Q}" "$CSVNAME")

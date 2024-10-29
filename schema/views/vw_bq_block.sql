@@ -12,7 +12,8 @@ SELECT block.epoch_no,
        subq.sum_tx_fee,
        subq.script_count,
        subq.sum_script_size,
-       encode(ph.hash_raw, 'hex')  as pool_hash
+       encode(ph.hash_raw, 'hex')  as pool_hash,
+       encode(block.hash::bytea, 'hex') AS block_hash
 FROM ( SELECT block_1.id AS block_id,
               sum(tx.fee::numeric) AS sum_tx_fee,
               sum(tx.script_size::integer) AS sum_script_size, slot_leader_id,

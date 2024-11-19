@@ -42,7 +42,7 @@ SCHEMA="rel_stake_txout"
 DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert slots (clean until max) into table: tmp_rel_stake_txout_1
-TMPTBL="tmp_rel_stake_txout_1"
+TMPTBL="tmp_${SCHEMA}_1"
 Q="with dat AS
          (SELECT block.epoch_no,
                  sa.view        AS address,
@@ -85,23 +85,14 @@ bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 SRCDATASET="${BQ_PROJECT}.db_sync"
 TARGETTBL="${BQ_PROJECT}.cardano_mainnet.rel_stake_txout"
 Q="
-   BEGIN TRANSACTION;
    -- 1 insert new slots
    INSERT INTO ${TARGETTBL}
    SELECT * FROM ${SRCDATASET}.${TMPTBL};
    -- 2 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
-   COMMIT TRANSACTION;
 "
+echo "$Q"
 
-#DRYRUN="--dry_run"
-DRYRUN=
-
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/update_rel_stake_txout-query.err > logs/update_rel_stake_txout-query.out
-
-echo
-echo "the new block height: ${MAX_SLOT_NO}"
-echo "all done."
 
 function transform_csv() {
 	local FNAME=$1

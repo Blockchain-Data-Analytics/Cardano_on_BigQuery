@@ -34,7 +34,7 @@ SCHEMA="epoch_stake"
 DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert epoch into table: tmp_epoch_stake_1
-TMPTBL="tmp_epoch_stake_1"
+TMPTBL="tmp_epoch_${SCHEMA}_1"
 Q="
   SELECT epoch_no,
          stake_addr_hash,

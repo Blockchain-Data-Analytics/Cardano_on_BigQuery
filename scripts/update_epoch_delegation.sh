@@ -34,7 +34,7 @@ SCHEMA="${TNAME}"
 DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert epoch into tmp table
-TMPTBL="tmp_${TNAME}_1"
+TMPTBL="tmp_epoch_${TNAME}_1"
 Q="
   SELECT epoch_no, stake_addr_hash, delegations
   FROM analytics.vw_bq_delegation

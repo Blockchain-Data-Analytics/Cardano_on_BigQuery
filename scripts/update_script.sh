@@ -91,7 +91,6 @@ bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 # run the transaction
 SRCDATASET="${BQ_PROJECT}.db_sync"
 Q="
-   BEGIN TRANSACTION;
    -- 1 delete slots
    DELETE FROM ${TARGETTBL} WHERE slot_no >= ${CLEAN_SLOT_NO};
    -- 2 insert new slots
@@ -99,11 +98,5 @@ Q="
    SELECT * FROM ${SRCDATASET}.${TMPTBL};
    -- 3 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
-   COMMIT TRANSACTION;
 "
-
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/update_${TNAME}-query.err > logs/update_${TNAME}-query.out
-
-echo
-echo "table's ${TNAME} new block height: ${MAX_SLOT_NO}"
-echo "all done."
+echo "$Q"

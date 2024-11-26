@@ -39,6 +39,9 @@ Q+="COMMIT TRANSACTION;"
 # Print the query for debugging (optional)
 # echo -e "$Q"
 
+# DRYRUN="--dry_run"
+DRYRUN=
+
 # Execute the transaction
 ${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/transaction-query.err > logs/transaction-query.out
 

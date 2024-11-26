@@ -96,4 +96,4 @@ Q="
    -- 3 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
 "
-echo "$Q"
+echo "$Q" > "/tmp/${SCHEMA}-query.sql"

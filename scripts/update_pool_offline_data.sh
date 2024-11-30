@@ -56,7 +56,7 @@ Q="
          pmr.url AS metadata_url,
          encode(pmr.hash, 'base64') AS metadata_hash,
          encode(tx.hash,'hex') AS metadata_registered_tx_hash
-  FROM public.pool_offline_data AS pod
+  FROM public.off_chain_pool_data AS pod
   LEFT JOIN public.pool_metadata_ref pmr ON pod.pmr_id = pmr.id
   JOIN public.pool_hash ph ON pod.pool_id = ph.id
   JOIN tx ON pmr.registered_tx_id = tx.id

@@ -32,7 +32,7 @@ for TABLE in tx tx_in_out tx_consumed_output tx_hash tx_metadata block block_has
   SCRIPT="./update_${TABLE}.sh"
   echo "Updating ${TABLENAME} since ${STARTING_SLOT} slot until ${ENDING_SLOT}"
   $(${SCRIPT} ${STARTING_SLOT} ${ENDING_SLOT})
-  OUTPUT=$(cat "/tmp/${TABLE}-query.sql)
+  OUTPUT=$(cat "/tmp/${TABLE}-query.sql")
   # Append the script output to the Q string
   Q+="${OUTPUT}\n"
   rm "/tmp/${TABLE}-query.sql"

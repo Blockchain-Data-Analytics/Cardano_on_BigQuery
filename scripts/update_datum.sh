@@ -56,7 +56,7 @@ function transform_csv() {
     return 0
 }
 
-TMPTBL="tmp_${TNAME}_1"
+TMPTBL="tmp_${SCHEMA}_1"
 CSVNAME="update_${SCHEMA}"
 
 Q="SELECT epoch_no, slot_no, txidx,

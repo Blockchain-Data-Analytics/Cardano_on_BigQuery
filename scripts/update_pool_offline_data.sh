@@ -69,7 +69,7 @@ TARGETTBL="${BQ_PROJECT}.cardano_mainnet.${TNAME}"
 #DRYRUN="--dry_run"
 DRYRUN=
 
-if [ -z "${NREAD}" -o $NREAD -lt 0 ]
+if [ -z "${NREAD}" ] || [ "$NREAD" -lt 0 ]
 then
   echo "Q: returned ${NREAD}.";
   exit 1;

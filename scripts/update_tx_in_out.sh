@@ -46,7 +46,7 @@ TARGETTBL="${PROJECTID}.${TARGETDATASET}.${SCHEMA}"
 ## 1 delete slots (no preparation needed)
 
 ## 2 insert slots (clean until max) into table: t3
-TMPTBL="update_${SCHEMA}"
+TMPTBL="tmp_${SCHEMA}_1"
 CSVNAME="update_${SCHEMA}"
 
 Q="SELECT epoch_no, slot_no, txidx, inputs, outputs
@@ -59,7 +59,6 @@ bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "${PROJECTID}:${SRCDATASET}"
 
 # run the transaction
 Q="
-   BEGIN TRANSACTION;
    -- 1 delete slots
    DELETE FROM ${TARGETTBL} WHERE slot_no >= ${CLEAN_SLOT_NO};
    -- 2 insert new slots
@@ -67,14 +66,5 @@ Q="
    SELECT * FROM ${PROJECTID}.${SRCDATASET}.${TMPTBL};
    -- 3 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
-   COMMIT TRANSACTION;
 "
-
-#DRYRUN="--dry_run"
-DRYRUN=
-
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id="${PROJECTID}:${TARGETDATASET}" --nouse_legacy_sql "${Q}" 2> logs/${CSVNAME}-query.err > logs/${CSVNAME}-query.out
-
-echo
-echo "the new block height: ${MAX_SLOT_NO}"
-echo "all done."
+echo "$Q" > "/tmp/${SCHEMA}-query.sql"

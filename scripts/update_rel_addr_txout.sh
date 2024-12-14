@@ -46,7 +46,7 @@ SRCDATASET="db_sync"
 TARGETDATASET="cardano_mainnet"
 TARGETTBL="${PROJECTID}.${TARGETDATASET}.${SCHEMA}"
 
-TMPTBL="update_${SCHEMA}"
+TMPTBL="tmp_${SCHEMA}_1"
 CSVNAME="update_${SCHEMA}"
 
 ## 1 insert slots (clean until max) into temporary table
@@ -110,20 +110,10 @@ bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "${PROJECTID}:${SRCDATASET}"
 
 # run the transaction
 Q="
-   BEGIN TRANSACTION;
    -- 1 insert new slots
    INSERT INTO ${TARGETTBL}
    SELECT * FROM ${PROJECTID}.${SRCDATASET}.${TMPTBL};
    -- 2 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
-   COMMIT TRANSACTION;
 "
-
-#DRYRUN="--dry_run"
-DRYRUN=
-
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id="${PROJECTID}:${TARGETDATASET}" --nouse_legacy_sql "${Q}" 2> logs/${CSVNAME}-query.err > logs/${CSVNAME}-query.out
-
-echo
-echo "table's ${SCHEMA} new block height: ${MAX_SLOT_NO}"
-echo "all done."
+echo "$Q" > "/tmp/${SCHEMA}-query.sql"

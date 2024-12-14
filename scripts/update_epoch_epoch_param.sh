@@ -34,7 +34,7 @@ SCHEMA="epoch_param"
 DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert epoch into table: tmp_epoch_param_1
-TMPTBL="tmp_epoch_param_1"
+TMPTBL="tmp_epoch_${SCHEMA}_1"
 Q="
     SELECT epoch_no, params
   FROM analytics.vw_bq_epoch_param

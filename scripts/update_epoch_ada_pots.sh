@@ -34,7 +34,7 @@ SCHEMA="${TNAME}"
 DATASETID="${BQ_PROJECT}:db_sync"
 
 ## 1 insert epoch into temporary table
-TMPTBL="tmp_${TNAME}_1"
+TMPTBL="tmp_epoch_${TNAME}_1"
 Q="
   SELECT epoch_no, slot_no,
          treasury, reserves, rewards, utxo,

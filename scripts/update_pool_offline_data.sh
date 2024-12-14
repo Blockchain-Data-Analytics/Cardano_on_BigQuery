@@ -56,7 +56,7 @@ Q="
          pmr.url AS metadata_url,
          encode(pmr.hash, 'base64') AS metadata_hash,
          encode(tx.hash,'hex') AS metadata_registered_tx_hash
-  FROM public.pool_offline_data AS pod
+  FROM public.off_chain_pool_data AS pod
   LEFT JOIN public.pool_metadata_ref pmr ON pod.pmr_id = pmr.id
   JOIN public.pool_hash ph ON pod.pool_id = ph.id
   JOIN tx ON pmr.registered_tx_id = tx.id
@@ -69,7 +69,7 @@ TARGETTBL="${BQ_PROJECT}.cardano_mainnet.${TNAME}"
 #DRYRUN="--dry_run"
 DRYRUN=
 
-if [ -z "${NREAD}" -o $NREAD -lt 0 ]
+if [ -z "${NREAD}" ] || [ "$NREAD" -lt 0 ]
 then
   echo "Q: returned ${NREAD}.";
   exit 1;
@@ -88,7 +88,6 @@ bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 # run the transaction
 SRCDATASET="${BQ_PROJECT}.db_sync"
 Q="
-   BEGIN TRANSACTION;
    -- 1 delete slots
    -- none to delete as we do not store the slot number in the table
    -- 2  insert new slots
@@ -96,11 +95,5 @@ Q="
    SELECT * FROM ${SRCDATASET}.${TMPTBL};
    -- 3 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
-   COMMIT TRANSACTION;
 "
-
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/update_${TNAME}-query.err > logs/update_${TNAME}-query.out
-
-echo
-echo "table's ${TNAME} new block height: ${MAX_SLOT_NO}"
-echo "all done."
+echo "$Q" > "/tmp/${SCHEMA}-query.sql"

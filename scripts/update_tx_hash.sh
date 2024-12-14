@@ -43,7 +43,7 @@ DATASETID="${BQ_PROJECT}:db_sync"
 ## 1 delete slots 
 
 ## 2 insert slots (clean until max) into table: tmp_tx_hash_1
-TMPTBL="tmp_tx_hash_1"
+TMPTBL="tmp_${SCHEMA}_1"
 Q="
   SELECT epoch_no, slot_no, txidx, tx_hash
   FROM analytics.vw_bq_tx_hash
@@ -57,7 +57,6 @@ bq_load_csv "$CSVNAME" "$TMPTBL" "$SCHEMA" "$DATASETID"
 SRCDATASET="${BQ_PROJECT}.db_sync"
 TARGETTBL="${BQ_PROJECT}.cardano_mainnet.tx_hash"
 Q="
-   BEGIN TRANSACTION;
    -- 1 delete slots
    DELETE FROM ${TARGETTBL} WHERE slot_no >= ${CLEAN_SLOT_NO};
    -- 2 insert new slots
@@ -65,14 +64,5 @@ Q="
    SELECT * FROM ${SRCDATASET}.${TMPTBL};
    -- 3 update the last index table
    UPDATE db_sync.last_index set last_slot_no=${MAX_SLOT_NO} WHERE tablename='${TARGETTBL}';
-   COMMIT TRANSACTION;
 "
-
-#DRYRUN="--dry_run"
-DRYRUN=
-
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/update_tx_hash-query.err > logs/update_tx_hash-query.out
-
-echo
-echo "the new block height: ${MAX_SLOT_NO}"
-echo "all done."
+echo "$Q" > "/tmp/${SCHEMA}-query.sql"

@@ -16,6 +16,7 @@ echo $BQ_CONFIG > ${TEMPDIR}/key.json
 gcloud auth activate-service-account $BQUSER --key-file ${TEMPDIR}/key.json 
 ${BQ} ls
 
+DATASETID="${BQ_PROJECT}:db_sync"
 res2=$(${PSQL} -c "SELECT max(slot_no) as max_slot, max(epoch_no) as max_epoch from public.block;")
 ENDING_SLOT=$(echo ${res2} | ${SED} -ne 's/^max_slot | max_epoch --*+--* \([0-9][0-9]*\).*/\1/p;')
 PG_EPOCH=$(echo ${res2} | ${SED} -ne 's/^max_slot | max_epoch --*+--* \([0-9][0-9]*\) | \([0-9][0-9]*\).*/\2/p;')
@@ -43,13 +44,13 @@ for TABLE in tx tx_in_out tx_consumed_output tx_hash tx_metadata block block_has
 done
 Q+="COMMIT TRANSACTION;"
 # Print the query for debugging (optional)
-# echo -e "$Q"
+echo -e "$Q" > query.txt
 
 # DRYRUN="--dry_run"
 DRYRUN=
 
 # Execute the transaction
-${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql "${Q}" 2> logs/transaction-query.err > logs/transaction-query.out
+${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql < query.txt 2> logs/transaction-query.err > logs/transaction-query.out
 
 
 echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"

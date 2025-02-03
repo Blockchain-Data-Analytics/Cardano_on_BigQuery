@@ -6,7 +6,7 @@ import pandas_gbq
 import sys
 import psycopg2
 from google.oauth2 import service_account
-from datetime import datetime
+from datetime import datetime, timezone
 
 from block_tables import query_block_tables
 from epoch_tables import query_epoch_tables
@@ -118,10 +118,10 @@ def main():
     with open('msg.txt', 'w') as f:
         f.write(f"Running BigQuery/Postgres deep comparison for epoch: {epoch_no}\n")
         for bq, pg, bq_post_process, pg_post_process in queries:
-            tstart = datetime.utcnow()
+            tstart = datetime.now(timezone.utc)
             res = bq.rfind("FROM ")
             sub = bq[res + 5:]
-            next_space_idx = re.search('\s', sub)
+            next_space_idx = re.search(r'\s', sub)
             table_name = sub[0:next_space_idx.start()] if next_space_idx else sub
             print(f"Table: {table_name}")
             pg_df = pg_post_process(get_pg(con, pg))
@@ -132,7 +132,7 @@ def main():
             diff = pg_df.compare(bq_df)  ## I think this one is currently too cheap unless we have the data with a strict order in BQ! in the meantime: we need a row by row and col by col comparison with JSON unpacking and sorting
             diff_msg = "PG - BQ have identical contents\n\n" if (len(diff.index) == 0) else f"PG - BQ contents differ:\n{diff}\n\n"
             f.write(diff_msg)
-            tend = datetime.utcnow()
+            tend = datetime.now(timezone.utc)
             log_deep_comparison(credentials, epoch_no, table_name, tstart, tend, pg, bq, pg_df, bq_df)
         try:
             cur.close()

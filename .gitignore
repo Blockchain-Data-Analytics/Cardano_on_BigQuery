@@ -1,2 +1,4 @@
 ext/
 **/.DS_Store
+scripts/key.json
+*.local

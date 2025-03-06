@@ -54,7 +54,7 @@ Q="with dat AS
                    JOIN public.tx ON tx.id = tx_out.tx_id
                    JOIN public.block ON block.id = tx.block_id
                    JOIN public.stake_address AS sa ON sa.id = tx_out.stake_address_id
-          WHERE block.slot_no > ${CLEAN_SLOT_NO} AND block.slot_no <= ${MAX_SLOT_NO}
+          WHERE block.slot_no >= ${CLEAN_SLOT_NO} AND block.slot_no <= ${MAX_SLOT_NO}
           ORDER BY block.epoch_no, sa.view, block.slot_no, tx.block_index, tx_out.index ASC
          )
    SELECT epoch_no,

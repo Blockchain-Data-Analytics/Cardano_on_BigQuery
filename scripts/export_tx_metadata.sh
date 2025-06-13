@@ -10,15 +10,15 @@ function Q() {
       local EPOCH=$1
       echo "
     SELECT block.epoch_no, encode(tx.hash,'hex') AS \"tx_hash\",
-           block.slot_no, tx.block_index AS txidx, subq.metadata
+           block.slot_no, tx.block_index AS txidx, subq.metadata, subq.key
     FROM (
-        SELECT tx_id,
+        SELECT tx_id, key,
             json_agg(('{\"index\":'||key::text||',\"meta\":'||json::text||'}')::json) AS metadata
         FROM public.tx_metadata
         JOIN public.tx itx ON itx.id = tx_id
         JOIN public.block ib ON ib.id = itx.block_id
         WHERE ib.epoch_no = ${EPOCH}
-        GROUP BY tx_id
+        GROUP BY tx_id, key
         ORDER BY tx_id ASC
     ) AS subq
     JOIN public.tx ON tx.id = subq.tx_id

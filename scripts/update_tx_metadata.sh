@@ -47,16 +47,16 @@ DATASETID="${BQ_PROJECT}:db_sync"
 TMPTBL="tmp_${TNAME}_1"
 Q="
     SELECT block.epoch_no, encode(tx.hash,'hex') AS \"tx_hash\",
-           block.slot_no, tx.block_index AS txidx, subq.metadata
+           block.slot_no, tx.block_index AS txidx, subq.metadata, subq.key
     FROM (
-        SELECT tx_id,
+        SELECT tx_id, key,
             json_agg(('{\"index\":'||key::text||',\"meta\":'||json::text||'}')::json) AS metadata
         FROM public.tx_metadata
         JOIN public.tx itx ON itx.id = tx_id
         JOIN public.block ib ON ib.id = itx.block_id
         WHERE ib.slot_no >= ${CLEAN_SLOT_NO}
         AND ib.slot_no <= ${MAX_SLOT_NO}
-        GROUP BY tx_id
+        GROUP BY tx_id, key
         ORDER BY tx_id ASC
     ) AS subq
     JOIN public.tx ON tx.id = subq.tx_id

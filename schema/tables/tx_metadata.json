@@ -28,5 +28,11 @@
    "name": "metadata",
    "type": "JSON",
    "mode": "REQUIRED"
+ },
+ {
+   "description": "The metadata key",
+   "name": "key",
+   "type": "STRING",
+   "mode": "NULLABLE"
  }
 ]

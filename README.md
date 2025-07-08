@@ -4,7 +4,7 @@ Cardano on-chain data made accessible on BigQuery
 
 ## Since January 1st, 2025, the dataset is private
 
-Please get in contact with us (bca@sbclab.net) if you'd like to access it.
+Please get in contact with us (info@blockchain-applied.com) if you'd like to access it.
 
 ## BigQuery Dataset _cardano-mainnet_
 

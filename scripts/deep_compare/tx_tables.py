@@ -280,40 +280,33 @@ def query_tx_metadata(epoch_no, bq_project = os.environ['BQ_PROJECT']):
                            ||',' || slot_no
                            ||',' || txidx
                            ||',' || tx_hash
+                           ||',' || key
                            ||')' AS str
                       FROM
-                      (SELECT epoch_no, slot_no, txidx, tx_hash	
+                      (SELECT epoch_no, slot_no, txidx, tx_hash, key	
                          FROM `{bq_project}.cardano_mainnet.tx_metadata`
                          WHERE epoch_no = {epoch_no}
-                         ORDER BY epoch_no, slot_no, txidx, tx_hash ASC))
+                         ORDER BY epoch_no, slot_no, txidx, tx_hash, key, JSON_VALUE(metadata) ASC))
                     ) AS innerq;""",
-           f"""WITH dat AS
-                      (    SELECT block.epoch_no, encode(tx.hash,'hex') AS "tx_hash",
-                block.slot_no, tx.block_index AS txidx, subq.metadata
-            FROM (
-                SELECT tx_id,
-                    json_agg(('{{"index":'||key::text||',"meta":'||json::text||'}}')::json) AS metadata
-                FROM public.tx_metadata
-                JOIN public.tx itx ON itx.id = tx_id
-                JOIN public.block ib ON ib.id = itx.block_id
-                WHERE ib.epoch_no = {epoch_no}
-                GROUP BY tx_id
-                ORDER BY tx_id ASC
-            ) AS subq
-            JOIN public.tx ON tx.id = subq.tx_id
-                                JOIN public.block ON block.id = tx.block_id AND block.epoch_no = {epoch_no}
-                       ORDER BY block.epoch_no, block.slot_no, tx.block_index, encode(tx.hash,'hex') ASC)
-                    
-                    SELECT encode(SHA256(innerq.hash_b64),'base64') AS hash_b64 FROM
-                    (SELECT STRING_AGG(encode(SHA256(subq.str::bytea),'base64'), ',')::bytea AS hash_b64 FROM
-                     (SELECT
+           f"""WITH data AS
+                    (SELECT ib.epoch_no, ib.slot_no, itx.block_index AS txidx, encode(itx.hash,'hex') AS "tx_hash", tm.key
+                     FROM public.tx_metadata tm
+                     JOIN public.tx itx ON itx.id = tm.tx_id
+                     JOIN public.block ib ON ib.id = itx.block_id
+                     WHERE ib.epoch_no = {epoch_no}
+                     ORDER BY ib.epoch_no, ib.slot_no, itx.block_index, tx_hash, tm.key, tm.json::text ASC
+                    )
+               SELECT encode(SHA256(innerq.hash_b64),'base64') AS hash_b64 FROM
+                 (SELECT STRING_AGG(encode(SHA256(subq.str::bytea),'base64'), ',')::bytea AS hash_b64 FROM
+                    (SELECT
                            '('|| epoch_no 
                            ||',' || slot_no
                            ||',' || txidx
                            ||',' || tx_hash
+                           ||',' || key
                            ||')' AS str
-                      FROM dat) AS subq
-                    ) AS innerq""",
+                      FROM data) AS subq
+                 ) AS innerq;""",
         lambda x: x, lambda x: x)
 
 def query_tx_consumed_output(epoch_start_slot_no, epoch_end_slot_no, bq_project = os.environ['BQ_PROJECT']):

@@ -26,4 +26,5 @@ function Q() {
 }
 
 # starting from 211, continuing from 216
-process_epoch_f Q "tx_metadata" "${BQ_PROJECT}.db_sync" 216
+#process_epoch_f Q "tx_metadata" "${BQ_PROJECT}.db_sync" 216
+process_one_epoch_f Q "tx_metadata" "${BQ_PROJECT}.db_sync" $1

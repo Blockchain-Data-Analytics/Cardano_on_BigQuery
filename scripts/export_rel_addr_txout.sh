@@ -19,4 +19,4 @@ function transform_csv() {
     return 0
 }
 
-process_epoch_f Q "rel_addr_txout" "${BQ_PROJECT}.db_sync" 0
+process_one_epoch_f Q "rel_addr_txout" "${BQ_PROJECT}.db_sync" $1

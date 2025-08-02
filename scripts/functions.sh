@@ -52,6 +52,20 @@ function copy_data() {
 }
 
 # process the query for each epoch until zero records are returned
+function process_one_epoch_f() {
+    local fQUERY=$1
+    local OUTNAME=$2
+    local TARGETDATASET=$3
+    local EPOCH=$4
+    local NREAD=0
+    NREAD=$(pg_query_to_csv "$($fQUERY $EPOCH)" "${OUTNAME}-${EPOCH}")
+    if [ $NREAD -gt 0 ]; then
+      upload_csv ${OUTNAME} ${EPOCH} ${TARGETDATASET}
+      sleep $SLEEPTIME
+    fi
+    echo ${NREAD}
+}
+
 function process_epoch_f() {
     local fQUERY=$1
     local OUTNAME=$2
@@ -61,12 +75,8 @@ function process_epoch_f() {
     if [ -z "$PSQL" ]; then echo "\$PSQL undefined!"; (exit 1); fi
     if [ -z "$SED" ]; then echo "\$SED undefined!"; (exit 1); fi
     while [ $NREAD -gt 0 ]; do
-      NREAD=$(pg_query_to_csv "$($fQUERY $EPOCH)" "${OUTNAME}-${EPOCH}")
+      NREAD=$(process_one_epoch_f ${fQUERY} ${OUTNAME} ${TARGETDATASET} ${EPOCH})
       echo "epoch ${EPOCH} returned: ${NREAD}"
-      if [ $NREAD -gt 0 ]; then
-        upload_csv ${OUTNAME} ${EPOCH} ${TARGETDATASET}
-        sleep $SLEEPTIME
-      fi
       EPOCH=$((EPOCH + 1))
     done
 }

@@ -39,11 +39,32 @@ def get_pg_connection():
         exit(1)
 
 
+def get_local_pg_connection():
+    try:
+        connection = psycopg2.connect(dbname=os.environ['PGDATABASE'], host='localhost',
+                                      port='5432',
+                                      password=os.environ['PGPASSWORD'], user=os.environ['PGUSER'])
+        return connection
+    except Exception as e:
+        print("Failed connecting to database. Cause - %s" % (str(e)))
+        exit(1)
+
+
 def get_pg(pg_conn, pg_query):
     try:
         query_res = pd.read_sql_query(pg_query, pg_conn)
         return pd.DataFrame(query_res)
     except psycopg2.Error as e:
+        print(f'Εrror executing sql query: {pg_query}', e)
+
+def run_pg(pg_con, pg_query):
+    if pg_con is None:
+        print("no db connection")
+        return
+    try:
+        with pg_con.cursor() as cur:
+            cur.execute(pg_query)
+    except (Exception, psycopg2.DatabaseError) as e:
         print(f'Εrror executing sql query: {pg_query}', e)
 
 
@@ -89,20 +110,22 @@ def get_bq_max_slot(credentials, bq_project = os.environ['BQ_PROJECT']):
 
 def log_deep_comparison(credentials, epoch_no, table_name0, tstart, tend, pg_query0, bq_query0, pg_hash0, bq_hash0):
     table_name = table_name0.replace('`','')
-    pg_query = pg_query0.replace('\\','\\\\').replace('"','\\"').replace('\n','\\n')
-    bq_query = bq_query0.replace('\\','\\\\').replace('"','\\"').replace('\n','\\n')
+    pg_query = pg_query0.replace('\\','\\\\').replace('\'','\'\'').replace('\n','\\n')
+    bq_query = bq_query0.replace('\\','\\\\').replace('\'','\'\'').replace('\n','\\n')
     pg_hash = 'empty' if pg_hash0.empty else pg_hash0["hash_b64"][0]
     bq_hash = 'empty' if bq_hash0.empty else bq_hash0["hash_b64"][0]
-    query = f"INSERT INTO db_sync.log_deep_comparison \
+    query = f"INSERT INTO analytics.log_deep_comparison \
                 (epoch_no,table_name,start_time,end_time,pg_query,bq_query,pg_hash,bq_hash) \
               VALUES \
-                ({epoch_no},'{table_name}','{tstart.isoformat()}','{tend.isoformat()}',\"{pg_query}\",\"{bq_query}\",'{pg_hash}','{bq_hash}') "
+                ({epoch_no},'{table_name}','{tstart.isoformat()}','{tend.isoformat()}','{pg_query}','{bq_query}','{pg_hash}','{bq_hash}');"
     print(f"query = \n{query}")
-    get_bq(credentials, query)
+    #get_bq(credentials, query)
+    run_pg(credentials, query)
 
 def main():
-    con = get_pg_connection()
-    cur = con.cursor()
+    pg_con = get_pg_connection()
+    pg_local_con = get_local_pg_connection()
+    cur = pg_con.cursor()
     current_script_path = os.path.abspath(__file__)
     parent_directory = os.path.dirname(os.path.dirname(current_script_path))
     keyfile_path = f"{parent_directory}/key.json"
@@ -114,17 +137,21 @@ def main():
     print(f"Running BigQuery/Postgres deep comparison for epoch: {epoch_no}")
     epoch_start_slot_no = get_epoch_start_slot(cur, epoch_no)
     epoch_end_slot_no = get_epoch_end_slot(cur, epoch_no)
+    counter = 0
     queries = bq_pg_queries(epoch_no, epoch_start_slot_no, epoch_end_slot_no)
     with open('msg.txt', 'w') as f:
         f.write(f"Running BigQuery/Postgres deep comparison for epoch: {epoch_no}\n")
         for bq, pg, bq_post_process, pg_post_process in queries:
+            counter = counter + 1
+            if counter > 5:
+                break
             tstart = datetime.now(timezone.utc)
             res = bq.rfind("FROM ")
             sub = bq[res + 5:]
             next_space_idx = re.search(r'\s', sub)
             table_name = sub[0:next_space_idx.start()] if next_space_idx else sub
             print(f"Table: {table_name}")
-            pg_df = pg_post_process(get_pg(con, pg))
+            pg_df = pg_post_process(get_pg(pg_con, pg))
             print(f"Pg returned: {pg_df}")
             bq_df = bq_post_process(get_bq(credentials, bq))
             print(f"BQ returned: {bq_df}")
@@ -133,15 +160,18 @@ def main():
             diff_msg = "PG - BQ have identical contents\n\n" if (len(diff.index) == 0) else f"PG - BQ contents differ:\n{diff}\n\n"
             f.write(diff_msg)
             tend = datetime.now(timezone.utc)
-            log_deep_comparison(credentials, epoch_no, table_name, tstart, tend, pg, bq, pg_df, bq_df)
+            #log_deep_comparison(credentials, epoch_no, table_name, tstart, tend, pg, bq, pg_df, bq_df)
+            log_deep_comparison(pg_local_con, epoch_no, table_name, tstart, tend, pg, bq, pg_df, bq_df)
         try:
             cur.close()
-            con.commit()
+            pg_con.commit()
         except psycopg2.Error as e:
             print(f"Error in closing database connection: {e}")
-            con.rollback()
-            con.close()
+            pg_con.rollback()
+            pg_con.close()
             exit(1)
+        pg_local_con.commit()
+        pg_local_con.close()
         print("Finished running BigQuery/Postgres deep comparison")
 
 

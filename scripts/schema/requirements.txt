@@ -1,0 +1,4 @@
+google-cloud-bigquery>=3.20
+PyYAML>=6.0
+# Only needed if you want to validate generated schemas:
+# jsonschema>=4.21

@@ -1,0 +1,93 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: rate-limit-normal
+  namespace: bca-schemas
+spec:
+  rateLimit:
+    average: 100
+    period: 1m
+    burst: 50
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: bca-schemas
+spec:
+  headers:
+    frameDeny: true
+    browserXssFilter: true
+    contentTypeNosniff: true
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-chain
+  namespace: bca-schemas
+spec:
+  chain:
+    middlewares:
+      - name: rate-limit-normal
+      - name: security-headers
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bca-schemas
+  namespace: bca-schemas
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`schemas.blockchain-applied.com`) && (Path(`/`) || Path(`/index.html`))
+      kind: Rule
+      priority: 10
+      services:
+        - name: schemas-cardano-bq
+          port: http
+
+    - match: Host(`schemas.blockchain-applied.com`) && Path(`/favicon.ico`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: schemas-cardano-bq
+          port: http
+
+    - match: Host(`schemas.blockchain-applied.com`) && PathPrefix(`/fonts`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: schemas-cardano-bq
+          port: http
+
+    - match: Host(`schemas.blockchain-applied.com`) && PathPrefix(`/cardano_on_bigquery`)
+      kind: Rule
+      services:
+        - name: schemas-cardano-bq
+          port: http
+      middlewares:
+        - name: security-chain
+
+    # - match: Host(`schemas.blockchain-applied.com`) && PathPrefix(`/cardano_api`)
+    #   kind: Rule
+    #   services:
+    #     - name: schemas-cardano-api
+    #       port: http
+    #   middlewares:
+    #     - name: security-chain
+    # - match: Host(`schemas.blockchain-applied.com`) && PathPrefix(`/bitcoin_api`)
+    #   kind: Rule
+    #   services:
+    #     - name: schemas-bitcoin-api
+    #       port: http
+    #   middlewares:
+    #     - name: security-chain
+
+  tls:
+    certResolver: letsencrypt

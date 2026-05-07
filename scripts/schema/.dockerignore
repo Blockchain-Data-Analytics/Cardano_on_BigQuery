@@ -1,0 +1,42 @@
+# Ship only what the build needs.
+#
+# The schema files are GENERATED inside the build (extract stage), so any
+# local out/ from previous extractor runs must not be sent into the build
+# context. This prevents accidentally shipping stale data.
+out/
+schema/
+
+.git
+.github
+.gitignore
+README.md
+Makefile
+*.md
+
+# Keep the test/sandbox stuff out
+sandbox/
+test-out/
+_smoketest.py
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# Don't ship the SA key even if it lands in the working dir
+*.json.key
+service-account*.json
+gcp-*.json
+
+# CRITICAL: google-github-actions/auth writes its generated credentials
+# file into $GITHUB_WORKSPACE as gha-creds-*.json. That directory IS the
+# Docker build context. Without this exclusion, the credentials file
+# ends up baked into the image. See:
+#   https://github.com/google-github-actions/auth/issues/123
+gha-creds-*.json
+
+# Editor cruft
+.vscode/
+.idea/
+*.swp
+.DS_Store
+fonts/.keep

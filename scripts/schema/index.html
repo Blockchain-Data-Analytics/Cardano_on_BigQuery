@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCA Schema Registry</title>
+  <style>
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 600;
+    font-display: swap;
+    src: url('/fonts/dm-sans-normal-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/dm-mono-400-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/fonts/dm-mono-500-latin.woff2') format('woff2');
+  }
+
+    :root {
+      --blue:    #3b6fd4;
+      --bg:      #0d0f14;
+      --surface: #13161e;
+      --border:  #1e2330;
+      --muted:   #4a5068;
+      --text:    #c8cdd8;
+      --bright:  #e8ecf4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 3rem 2rem;
+    }
+
+    header {
+      margin-bottom: 3.5rem;
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 300;
+      color: var(--bright);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    h1 span {
+      color: var(--blue);
+      font-weight: 500;
+    }
+
+    .subtitle {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      flex: 1;
+    }
+
+    .dataset {
+      background: var(--surface);
+      padding: 2rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: background 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dataset::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px; height: 100%;
+      background: var(--blue);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .dataset:hover { background: #161926; }
+    .dataset:hover::before { opacity: 1; }
+
+    .dataset-path {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--blue);
+    }
+
+    .dataset-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--bright);
+    }
+
+    .dataset-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .dataset-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .dataset-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.15s;
+    }
+
+    .dataset-links a:hover { color: var(--blue); }
+
+    footer {
+      margin-top: 3rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--blue); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <p class="eyebrow">BCA — Blockchain Applied</p>
+    <h1>Schema <span>Registry</span></h1>
+    <p class="subtitle">
+      Machine-readable schemas for on-chain datasets.
+      JSON Schema 2020-12, YAML, and JSON-LD — ready for AI agents and validators.
+    </p>
+  </header>
+
+  <div class="grid">
+
+    <a class="dataset" href="/cardano_on_bigquery/">
+      <span class="dataset-path">/cardano_on_bigquery</span>
+      <span class="dataset-title">Cardano on BigQuery</span>
+      <span class="dataset-desc">
+        Full schema catalogue for the <code>blockchain-analytics-392322.cardano_mainnet</code>
+        BigQuery dataset — tables, views, nested types, partitioning and clustering metadata.
+      </span>
+      <span class="dataset-links">
+        <a href="/cardano_on_bigquery/index.json">index.json</a>
+        <a href="/cardano_on_bigquery/index.yaml">index.yaml</a>
+      </span>
+    </a>
+
+  </div>
+
+  <footer>
+    <a href="https://www.blockchain-applied.com">blockchain-applied.com</a>
+    <a href="https://github.com/Blockchain-Data-Analytics/Cardano_on_BigQuery">github</a>
+    <span>schemas refreshed regularly</span>
+  </footer>
+
+</body>
+</html>

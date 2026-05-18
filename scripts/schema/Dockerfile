@@ -31,8 +31,8 @@
 #         --secret id=gcp_key,env=GCP_SA_KEY \
 #         ...
 #
-# In GitHub Actions with docker/build-push-action@v6, set the `secrets`
-# input — see .github/workflows/build-image.yml.
+# restart: kubectl rollout restart deployment/schemas-cardano-bq -n bca-schemas
+
 
 ARG  PYTHON_VERSION=3.12
 ARG  NGINX_VERSION=1.27
@@ -86,7 +86,7 @@ LABEL org.opencontainers.image.title="BCA schemas — Cardano on BigQuery"
 LABEL org.opencontainers.image.description="Static JSON Schema, YAML and JSON-LD descriptors for the cardano_mainnet BigQuery dataset"
 LABEL org.opencontainers.image.url="${BASE_URL}"
 LABEL org.opencontainers.image.source="https://github.com/Blockchain-Data-Analytics/Cardano_on_BigQuery"
-LABEL org.opencontainers.image.vendor="SBC Lab AG / BCA — Blockchain Applied"
+LABEL org.opencontainers.image.vendor="BCA — Blockchain Applied"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL bca.gcp-project="${GCP_PROJECT}"
 LABEL bca.bq-dataset="${BQ_DATASET}"
@@ -107,4 +107,3 @@ EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget -qO- http://localhost:8080/healthz || exit 1
-

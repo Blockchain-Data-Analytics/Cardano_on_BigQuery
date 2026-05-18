@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schemas-cardano-bq
+  namespace: bca-schemas
+  labels:
+    app.kubernetes.io/name: schemas-cardano-bq
+    app.kubernetes.io/component: web
+    app.kubernetes.io/part-of: bca
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: schemas-cardano-bq
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: schemas-cardano-bq
+        app.kubernetes.io/component: web
+        app.kubernetes.io/part-of: bca
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: schemas-cardano-bq
+
+      terminationGracePeriodSeconds: 15
+
+      imagePullSecrets:
+        - name: pullsecret
+
+      containers:
+        - name: nginx
+          image: code.blockchain-applied.com/bca/schemas-cardano-bq:latest
+          imagePullPolicy: Always
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          # nginx-unprivileged listens on 8080 and runs as UID 101.
+          # No writable paths needed — the image has no dynamic state.
+          securityContext:
+            runAsNonRoot:             true
+            runAsUser:                101
+            runAsGroup:               101
+            readOnlyRootFilesystem:   false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds:       10
+            failureThreshold:    3
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds:       20
+            failureThreshold:    3
+
+          resources:
+            requests:
+              cpu:    10m
+              memory: 16Mi
+            limits:
+              cpu:    100m
+              memory: 64Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: schemas-cardano-bq
+  namespace: bca-schemas
+  labels:
+    app.kubernetes.io/name: schemas-cardano-bq
+    app.kubernetes.io/component: web
+    app.kubernetes.io/part-of: bca
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: schemas-cardano-bq
+  ports:
+    - name: http
+      port:       80
+      targetPort: http
+      protocol:   TCP
+
+---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: schemas-cardano-bq
+#  namespace: bca-schemas
+#  labels:
+#    app.kubernetes.io/name: schemas-cardano-bq
+#    app.kubernetes.io/component: web
+#    app.kubernetes.io/part-of: bca
+#  annotations:
+#    # Traefik router config
+#    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+#    traefik.ingress.kubernetes.io/router.tls:          "true"
+#    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+#spec:
+#  ingressClassName: traefik
+#  tls:
+#    - hosts:
+#        - schemas.blockchain-applied.com
+#      secretName: schemas-blockchain-applied-tls
+#  rules:
+#    - host: schemas.blockchain-applied.com
+#      http:
+#        paths:
+#          - path:     /
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: schemas-cardano-bq
+#                port:
+#                  name: http

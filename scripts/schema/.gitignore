@@ -1,0 +1,5 @@
+*.json
+_old/
+out/
+fonts/
+*.local

@@ -90,4 +90,4 @@ spec:
     #     - name: security-chain
 
   tls:
-    certResolver: letsencrypt
+    secretName: bca-schemas-tls

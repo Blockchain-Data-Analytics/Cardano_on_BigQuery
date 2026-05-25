@@ -1,0 +1,6 @@
+key.json
+*.local
+.git
+*.env
+env/
+venv/

@@ -2,3 +2,4 @@ ext/
 **/.DS_Store
 scripts/key.json
 *.local
+slot_range_msg*

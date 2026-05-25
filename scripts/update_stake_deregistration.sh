@@ -24,10 +24,10 @@ if [ $DELTA -lt 0 ]; then
 	echo "something weird: bq@${ACT_SLOT_NO} pg@${CURR_SLOT_NO}!"
 	exit 1
 fi
-if [ $DELTA -gt $CAP_SLOTS ]; then
-	echo "too many slots in update, cap at $CAP_SLOTS"
-	CURR_SLOT_NO=$((ACT_SLOT_NO + CAP_SLOTS))
-fi
+#if [ $DELTA -gt $CAP_SLOTS ]; then
+#	echo "too many slots in update, cap at $CAP_SLOTS"
+#	CURR_SLOT_NO=$((ACT_SLOT_NO + CAP_SLOTS))
+#fi
 
 CLEAN_SLOT_NO=$((ACT_SLOT_NO - DELETE_SLOTS))
 MAX_SLOT_NO=$((CURR_SLOT_NO - GRACE_SLOTS))

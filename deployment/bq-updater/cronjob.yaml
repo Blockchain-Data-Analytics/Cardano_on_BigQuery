@@ -5,7 +5,7 @@ metadata:
   labels:
     app: cardano-bq-slot-sync
 spec:
-  suspend: true
+  suspend: false
   schedule: "3,33 * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
@@ -54,7 +54,7 @@ metadata:
   labels:
     app: cardano-bq-epoch-sync
 spec:
-  suspend: true
+  suspend: false
   schedule: "16 5 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3

@@ -43,14 +43,18 @@ do
   if [ "${PG_EPOCH_NO}" -gt "${BQ_EPOCH_NO}" ]; then
     SCRIPT="./update_epoch_${TABLE}.sh"
     echo "Updating ${TABLENAME}. BigQuery epoch: ${BQ_EPOCH_NO} - Postgres epoch: ${PG_EPOCH_NO}"
-    ${SCRIPT} ${BQ_EPOCH_NO} ${PG_EPOCH_NO}
+    [ "${BQ_DRYRUN}" = "true" ] && echo "DRY RUN: skipping ${SCRIPT}" || ${SCRIPT} ${BQ_EPOCH_NO} ${PG_EPOCH_NO}
   fi
 done
 
 rm ${TEMPDIR}/key.json
 rmdir ${TEMPDIR}
 
-gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "Updated BQ epoch tables to epoch_no ${PG_EPOCH_NO}" --project $BQ_PROJECT
+if [ "${BQ_DRYRUN}" = "true" ]; then
+  echo "DRY RUN: skipping Pub/Sub publish"
+else
+  gcloud pubsub topics publish ${PUBSUB_TOPIC_NAME} --message "Updated BQ epoch tables to epoch_no ${PG_EPOCH_NO}" --project $BQ_PROJECT
+fi
 
 echo "All done."
 

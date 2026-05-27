@@ -46,16 +46,19 @@ Q+="COMMIT TRANSACTION;"
 # Print the query for debugging (optional)
 echo -e "$Q" > query.txt
 
-# DRYRUN="--dry_run"
-DRYRUN=
+# Set BQ_DRYRUN=true to skip all writes (useful for testing)
+[ "${BQ_DRYRUN}" = "true" ] && DRYRUN="--dry_run" || DRYRUN=""
 
 # Execute the transaction
 ${BQ} query --bigqueryrc=$(pwd)/dot.bigqueryrc ${DRYRUN} --dataset_id=${DATASETID} --nouse_legacy_sql < query.txt 2> logs/transaction-query.err > logs/transaction-query.out
 
-
-echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"
-Q="UPDATE ${BQ_PROJECT}.db_sync.last_index set last_slot_no=${ENDING_SLOT}, last_epoch_no=${PG_EPOCH} WHERE tablename='db-sync';"
-${BQ} query --nouse_legacy_sql "${Q}"
+if [ "${BQ_DRYRUN}" = "true" ]; then
+  echo "DRY RUN: skipping last_index update and Pub/Sub publish"
+else
+  echo "Updating db-sync slot_no to ${ENDING_SLOT} and epoch_no to ${PG_EPOCH} in BigQuery"
+  Q="UPDATE ${BQ_PROJECT}.db_sync.last_index set last_slot_no=${ENDING_SLOT}, last_epoch_no=${PG_EPOCH} WHERE tablename='db-sync';"
+  ${BQ} query --nouse_legacy_sql "${Q}"
+fi
 
 rm ${TEMPDIR}/key.json
 rmdir ${TEMPDIR}

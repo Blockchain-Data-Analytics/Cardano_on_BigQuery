@@ -21,7 +21,7 @@ spec:
         spec:
           imagePullSecrets:
             - name: pullsecret
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
             - name: cardano-bq-slot-sync
               image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.0
@@ -70,7 +70,7 @@ spec:
         spec:
           imagePullSecrets:
             - name: pullsecret
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
             - name: cardano-bq-epoch-sync
               image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.0

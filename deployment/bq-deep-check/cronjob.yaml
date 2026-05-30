@@ -1,0 +1,87 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bq-deep-check
+  labels:
+    app: bq-deep-check
+    repo: Cardano_on_BigQuery.git
+spec:
+  schedule: 48 5/6 * * *
+  concurrencyPolicy: Forbid
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: bq-deep-check
+            repo: Cardano_on_BigQuery.git
+        spec:
+          containers:
+            - name: bq-deep-check
+              image: bq-deep-check
+              command:
+                - /usr/bin/bash
+                - "-c"
+                - |
+                  set -euo pipefail
+                  cd /app/scripts
+                  python3 deep_compare/slot_range_check.py
+                  sleep 2
+                  cat slot_range_msg.txt
+                  echo "done."
+                  if grep -q MISMATCH slot_range_msg.txt; then
+                    BODY=$(cat slot_range_msg.txt)
+                    curl -s -X POST "${ZAMMAD_URL}/api/v1/tickets" \
+                      -H "Authorization: Token token=${ZAMMAD_TOKEN}" \
+                      -H "Content-Type: application/json" \
+                      -d "{
+                        \"title\": \"BQ deep-check MISMATCH\",
+                        \"group\": \"Infrastructure\",
+                        \"customer\": \"bq-deep-check.bq-monitoring@blockchain-applied.com\",
+                        \"article\": {
+                          \"subject\": \"BQ deep-check MISMATCH\",
+                          \"body\": $(echo "$BODY" | jq -Rs .),
+                          \"type\": \"note\",
+                          \"internal\": false
+                        }
+                      }"
+                  fi
+                  exit 0
+              env:
+                - name: SLOT_WINDOW_DURATION_S
+                  value: "23400"
+                - name: BQ_KEY_FILE
+                  value: /app/key.json
+              envFrom:
+                - secretRef:
+                    name: credentials-pg
+                - secretRef:
+                    name: credentials-bq
+                - secretRef:
+                    name: credentials-zammad
+              volumeMounts:
+                - name: key-secret
+                  mountPath: /app/key.json
+                  subPath: key.json
+                  readOnly: true
+              resources:
+                limits:
+                  cpu: 300m
+                  memory: 256Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              imagePullPolicy: Always
+          volumes:
+            - name: key-secret
+              secret:
+                secretName: key-bq
+          restartPolicy: OnFailure
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          imagePullSecrets:
+            - name: pullsecret
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3

@@ -5,17 +5,20 @@ metadata:
   labels:
     app: bq-deep-check
     repo: Cardano_on_BigQuery.git
+    app.kubernetes.io/version: 1.0.1
 spec:
   schedule: 48 5/6 * * *
   concurrencyPolicy: Forbid
   suspend: false
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
         metadata:
           labels:
             app: bq-deep-check
             repo: Cardano_on_BigQuery.git
+            app.kubernetes.io/version: 1.0.1
         spec:
           containers:
             - name: bq-deep-check

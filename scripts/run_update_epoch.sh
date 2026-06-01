@@ -31,7 +31,7 @@ gcloud auth activate-service-account $BQUSER --key-file ${TEMPDIR}/key.json
 ${BQ} ls
 
 # use for loop to read all tables
-for TABLE in epoch_param ada_pots param_proposal ma_minting pool_update pool_offline_data delegation reward reward_pool reward_addr rel_addr_txout rel_stake_txout epoch_stake;
+for TABLE in epoch_param ada_pots param_proposal ma_minting pool_update pool_offline_data delegation reward reward_pool reward_addr rel_addr_txout rel_stake_txout epoch_stake epoch_stake_addr epoch_stake_pool;
 do
   TABLENAME="${BQ_PROJECT}.cardano_mainnet.${TABLE}"
   res=$(${BQ} --format=json query --nouse_legacy_sql "SELECT last_epoch_no FROM ${BQ_PROJECT}.db_sync.last_index where tablename = '${TABLENAME}'")

@@ -11,7 +11,7 @@ source ./conf/config.pg
 source ./conf/config.bq
 source functions.sh
 
-TNAME="epoch_stake"
+TNAME="epoch_stake_pool"
 
 BQ_EPOCH_NO=$1
 PG_EPOCH_NO=$2
@@ -33,7 +33,7 @@ if [ -e "${CSVNAME}.csv" ]; then rm -f "${CSVNAME}.csv"; fi
 SCHEMA="${TNAME}"
 DATASETID="${BQ_PROJECT}:db_sync"
 
-## 1 insert epoch into table: tmp_epoch_stake_1
+## 1 insert epoch into table: tmp_epoch_stake_pool_1
 TMPTBL="tmp_epoch_${SCHEMA}_1"
 Q="
   SELECT epoch_no,

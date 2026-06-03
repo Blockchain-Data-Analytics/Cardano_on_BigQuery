@@ -25,7 +25,7 @@ function Q() {
          count_inputs,
          count_outputs
   FROM analytics.vw_bq_tx
-  WHERE block.epoch_no = ${EPOCH} "
+  WHERE epoch_no = ${EPOCH} "
 }
 
-process_epoch_f Q "tx" "${BQ_PROJECT}.db_sync" 0
+process_one_epoch_f Q "tx" "${BQ_PROJECT}.db_sync" $1

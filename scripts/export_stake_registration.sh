@@ -16,4 +16,6 @@ WHERE epoch_no = ${EPOCH}
 }
 
 # stake registration started in epoch 208
-process_epoch_f Q "stake_registration" "${BQ_PROJECT}.db_sync" 208
+#process_epoch_f Q "stake_registration" "${BQ_PROJECT}.db_sync" 208
+process_one_epoch_f Q "stake_registration" "${BQ_PROJECT}.db_sync" $1
+

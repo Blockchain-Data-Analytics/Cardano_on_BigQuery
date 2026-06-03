@@ -137,14 +137,10 @@ def main():
     print(f"Running BigQuery/Postgres deep comparison for epoch: {epoch_no}")
     epoch_start_slot_no = get_epoch_start_slot(cur, epoch_no)
     epoch_end_slot_no = get_epoch_end_slot(cur, epoch_no)
-    counter = 0
     queries = bq_pg_queries(epoch_no, epoch_start_slot_no, epoch_end_slot_no)
     with open('msg.txt', 'w') as f:
         f.write(f"Running BigQuery/Postgres deep comparison for epoch: {epoch_no}\n")
         for bq, pg, bq_post_process, pg_post_process in queries:
-            counter = counter + 1
-            if counter > 5:
-                break
             tstart = datetime.now(timezone.utc)
             res = bq.rfind("FROM ")
             sub = bq[res + 5:]

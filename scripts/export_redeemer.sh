@@ -15,4 +15,6 @@ function Q() {
 }
 
 # starting from epoch 290
-process_epoch_f Q "redeemer" "${BQ_PROJECT}.db_sync" 290
+#process_epoch_f Q "redeemer" "${BQ_PROJECT}.db_sync" 290
+process_one_epoch_f Q "redeemer" "${BQ_PROJECT}.db_sync" $1
+

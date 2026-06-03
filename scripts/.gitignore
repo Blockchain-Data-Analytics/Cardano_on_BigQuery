@@ -1,5 +1,8 @@
+env/
 *.csv
 logs/
 msg.txt
+query.txt
 deep_compare/__pycache__
 upload.all
+cronlog.txt

@@ -14,5 +14,5 @@ function Q() {
   WHERE epoch_no = ${EPOCH}"
 }
 
-process_epoch_f Q "block_hash" "${BQ_PROJECT}.db_sync" 330
+process_one_epoch_f Q "block_hash" "${BQ_PROJECT}.db_sync" $1
 

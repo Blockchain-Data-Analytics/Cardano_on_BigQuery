@@ -16,4 +16,6 @@ function Q() {
 }
 
 # starts with epoch 290
-process_epoch_f Q "collateral" "${BQ_PROJECT}.db_sync" 340
+#process_epoch_f Q "collateral" "${BQ_PROJECT}.db_sync" 340
+process_one_epoch_f Q "collateral" "${BQ_PROJECT}.db_sync" $1
+

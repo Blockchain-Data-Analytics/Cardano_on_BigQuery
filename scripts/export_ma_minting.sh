@@ -15,4 +15,4 @@ function Q() {
 }
 
 # ma minting started in epoch 251
-process_epoch_f Q "ma_minting" "${BQ_PROJECT}.db_sync" 251
+process_one_epoch_f Q "ma_minting" "${BQ_PROJECT}.db_sync" $1

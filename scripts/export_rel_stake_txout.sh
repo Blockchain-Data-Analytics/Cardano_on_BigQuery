@@ -15,5 +15,5 @@ function Q() {
 }
 
 # the first delegation was in epoch 208
-process_epoch_f Q "rel_stake_txout" "${BQ_PROJECT}.db_sync" 208
+process_one_epoch_f Q "rel_stake_txout" "${BQ_PROJECT}.db_sync" $1
 

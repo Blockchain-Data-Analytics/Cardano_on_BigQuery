@@ -14,4 +14,4 @@ function Q() {
    WHERE epoch_no = ${EPOCH} "
 }
 
-process_epoch_f Q "tx_in_out" "${BQ_PROJECT}.db_sync" 287
+process_one_epoch_f Q "tx_in_out" "${BQ_PROJECT}.db_sync" $1

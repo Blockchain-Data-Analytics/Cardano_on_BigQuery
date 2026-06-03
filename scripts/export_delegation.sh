@@ -16,4 +16,4 @@ function Q() {
 }
 
 # delegations started in epoch 208
-process_epoch_f Q "delegation" "${BQ_PROJECT}.db_sync" 208
+process_one_epoch_f Q "delegation" "${BQ_PROJECT}.db_sync" $1

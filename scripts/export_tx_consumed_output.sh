@@ -22,4 +22,4 @@ function Q() {
   WHERE b1.epoch_no = ${EPOCH}"
 }
 
-process_epoch_f Q "tx_consumed_output" "${BQ_PROJECT}.db_sync" 0
+process_one_epoch_f Q "tx_consumed_output" "${BQ_PROJECT}.db_sync" $1

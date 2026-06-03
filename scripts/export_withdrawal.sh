@@ -16,4 +16,6 @@ function Q() {
 }
 
 # 209 is the first epoch with withdrawals
-process_epoch_f Q "withdrawal" "${BQ_PROJECT}.db_sync" 209
+#process_epoch_f Q "withdrawal" "${BQ_PROJECT}.db_sync" 209
+process_one_epoch_f Q "withdrawal" "${BQ_PROJECT}.db_sync" $1
+

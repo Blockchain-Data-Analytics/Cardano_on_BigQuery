@@ -5,8 +5,9 @@ metadata:
   labels:
     app: cardano-bq-slot-sync
 spec:
-  suspend: true
-  schedule: "3,33 * * * *"
+  suspend: false
+  schedule: "34 * * * *"
+  timeZone: "Etc/UTC"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
@@ -24,7 +25,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: cardano-bq-slot-sync
-              image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.0
+              image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.3
               imagePullPolicy: Always
               command: ["bash", "-lc"]
               args:
@@ -54,8 +55,9 @@ metadata:
   labels:
     app: cardano-bq-epoch-sync
 spec:
-  suspend: true
-  schedule: "16 5 * * *"
+  suspend: false
+  schedule: "10 1 * * *"
+  timeZone: "Etc/UTC"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
@@ -73,7 +75,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: cardano-bq-epoch-sync
-              image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.0
+              image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.3
               imagePullPolicy: Always
               command: ["bash", "-lc"]
               args:

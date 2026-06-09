@@ -1,0 +1,99 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cardano-bq-slot-sync
+  labels:
+    app: cardano-bq-slot-sync
+spec:
+  suspend: false
+  schedule: "34 * * * *"
+  timeZone: "Etc/UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: cardano-bq-slot-sync
+        spec:
+          imagePullSecrets:
+            - name: pullsecret
+          restartPolicy: Never
+          containers:
+            - name: cardano-bq-slot-sync
+              image: cardano-bq-updater
+              imagePullPolicy: Always
+              command: ["bash", "-lc"]
+              args:
+                - gcloud config set project blockchain-analytics-392322 && ./run_bq_update.sh
+              env:
+                - name: BQ_DRYRUN
+                  value: "false"
+                - name: PUBSUB_TOPIC_NAME
+                  value: "bca-alerts"
+              envFrom:
+                - secretRef:
+                    name: bq-config
+                - secretRef:
+                    name: pg-config
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 512Mi
+                limits:
+                  cpu: 1000m
+                  memory: 2Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cardano-bq-epoch-sync
+  labels:
+    app: cardano-bq-epoch-sync
+spec:
+  suspend: false
+  schedule: "10 1 * * *"
+  timeZone: "Etc/UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 1800
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: cardano-bq-epoch-sync
+        spec:
+          imagePullSecrets:
+            - name: pullsecret
+          restartPolicy: Never
+          containers:
+            - name: cardano-bq-epoch-sync
+              image: cardano-bq-updater
+              imagePullPolicy: Always
+              command: ["bash", "-lc"]
+              args:
+                - gcloud config set project blockchain-analytics-392322 && ./run_update_epoch.sh
+              env:
+                - name: BQ_DRYRUN
+                  value: "false"
+                - name: PUBSUB_TOPIC_NAME
+                  value: "bca-alerts"
+              envFrom:
+                - secretRef:
+                    name: bq-config
+                - secretRef:
+                    name: pg-config
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 512Mi
+                limits:
+                  cpu: 1000m
+                  memory: 2Gi

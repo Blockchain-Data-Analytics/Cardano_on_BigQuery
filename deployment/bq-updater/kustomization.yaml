@@ -7,5 +7,6 @@ resources:
   - cronjob.yaml
 
 images:
-  - name: code.blockchain-applied.com/bca/cardano-bq-updater
+  - name: cardano-bq-updater
+    newName: code.blockchain-applied.com/bca/cardano-bq-updater
     newTag: "1.0.3"

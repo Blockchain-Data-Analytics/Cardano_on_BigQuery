@@ -25,7 +25,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: cardano-bq-slot-sync
-              image: code.blockchain-applied.com/bca/cardano-bq-updater:1.0.3
+              image: cardano-bq-updater
               imagePullPolicy: Always
               command: ["bash", "-lc"]
               args:

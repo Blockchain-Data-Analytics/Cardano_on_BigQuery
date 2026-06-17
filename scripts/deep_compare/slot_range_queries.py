@@ -126,7 +126,7 @@ def bq_slot_range_query(min_slot: int, max_slot: int, bq_project: str = None) ->
 (SELECT COUNT(*) AS cnt, STRING_AGG(TO_BASE64(SHA256(str)), ',') AS hash_b64 FROM
  (SELECT '('|| slot_no ||','|| txidx ||','|| `index` ||','|| consumed_in_slot_no ||','|| consumed_in_txidx ||')' AS str
   FROM `{p}.cardano_mainnet.tx_consumed_output`
-  WHERE {sl}
+  WHERE consumed_in_slot_no BETWEEN {min_slot} AND {max_slot}
   ORDER BY slot_no, txidx, `index` ASC)) AS innerq""")
 
     # tx_hash
@@ -285,7 +285,7 @@ def pg_slot_range_query(min_slot: int, max_slot: int) -> str:
 (SELECT COUNT(*) AS cnt, STRING_AGG(encode(SHA256(subq.str::bytea), 'base64'), ',')::bytea AS hash_b64 FROM
  (SELECT '('|| slot_no ||','|| txidx ||','|| "index" ||','|| consumed_in_slot_no ||','|| consumed_in_txidx ||')' AS str
   FROM analytics.vw_bq_tx_consumed_output
-  WHERE {sl}
+  WHERE consumed_in_slot_no BETWEEN {min_slot} AND {max_slot}
   ORDER BY slot_no, txidx, "index" ASC) AS subq) AS innerq""")
 
     # tx_hash (no normalization)

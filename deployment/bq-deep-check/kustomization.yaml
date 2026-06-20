@@ -9,4 +9,4 @@ resources:
 images:
   - name: bq-deep-check
     newName: code.blockchain-applied.com/bca/bq-deep-check
-    newTag: "1.0.1"
+    newTag: "1.0.2"

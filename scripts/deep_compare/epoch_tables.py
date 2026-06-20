@@ -176,7 +176,7 @@ def query_ada_pots(epoch_no):
                        ||',' || (deposits)
                        ||',' || (fees)
                        ||')' AS str
-                  FROM cardano_mainnet.ada_pots
+                  FROM `{bq_project}.cardano_mainnet.ada_pots`
                   WHERE epoch_no = {epoch_no}
                 ) AS innerq;""",
         f"""SELECT encode(SHA256(subq.str::bytea),'base64') AS hash_b64 FROM
@@ -206,7 +206,7 @@ def query_epoch_stake(epoch_no):
                 ||',' || (pool_hash)
                 ||',' || (amount)
                 ||')' AS str
-                FROM cardano_mainnet.epoch_stake
+                FROM `{bq_project}.cardano_mainnet.epoch_stake`
                 WHERE epoch_no = {epoch_no}
                 ORDER BY epoch_no, stake_addr_hash, pool_hash ASC))
                 AS innerq;""",
@@ -235,7 +235,7 @@ def query_epoch_stake_pool(epoch_no):
                 ||',' || (pool_hash)
                 ||',' || (amount)
                 ||')' AS str
-                FROM cardano_mainnet.epoch_stake_pool
+                FROM `{bq_project}.cardano_mainnet.epoch_stake_pool`
                 WHERE epoch_no = {epoch_no}
                 ORDER BY epoch_no, stake_addr_hash, pool_hash ASC))
                 AS innerq;""",
@@ -264,7 +264,7 @@ def query_epoch_stake_addr(epoch_no):
                 ||',' || (pool_hash)
                 ||',' || (amount)
                 ||')' AS str
-                FROM cardano_mainnet.epoch_stake_addr
+                FROM `{bq_project}.cardano_mainnet.epoch_stake_addr`
                 WHERE epoch_no = {epoch_no}
                 ORDER BY epoch_no, stake_addr_hash, pool_hash ASC))
                 AS innerq;""",

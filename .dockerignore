@@ -2,5 +2,5 @@ key.json
 *.local
 .git
 *.env
-env/
-venv/
+**/env
+**/venv

@@ -9,8 +9,8 @@ spec:
   schedule: "34 * * * *"
   timeZone: "Etc/UTC"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 30
+  failedJobsHistoryLimit: 30
   startingDeadlineSeconds: 600
   jobTemplate:
     spec:
@@ -59,8 +59,8 @@ spec:
   schedule: "10 1 * * *"
   timeZone: "Etc/UTC"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 30
+  failedJobsHistoryLimit: 30
   startingDeadlineSeconds: 1800
   jobTemplate:
     spec:

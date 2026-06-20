@@ -1,3 +1,12 @@
+# building:
+# tag_version="1.0.2"
+# docker buildx build \
+#    --platform linux/amd64,linux/arm64 \
+#    --tag code.blockchain-applied.com/bca/bq-deep-check:latest \
+#    --tag code.blockchain-applied.com/bca/bq-deep-check:${tag_version} \
+#    --push \
+#    -f Dockerfile.bq-deep-check .
+    
 FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

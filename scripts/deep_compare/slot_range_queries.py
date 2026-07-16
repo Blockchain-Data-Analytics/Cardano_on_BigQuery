@@ -298,7 +298,7 @@ def pg_slot_range_query(min_slot: int, max_slot: int) -> str:
 
     # tx_in_out (whitespace normalization)
     parts.append(f"""SELECT 'tx_in_out' AS table_name, innerq.cnt AS row_count, encode(SHA256(innerq.hash_b64), 'base64') AS hash_val FROM
-(SELECT COUNT(*) AS cnt, STRING_AGG(encode(SHA256(regexp_replace(regexp_replace(subq.str, '[\n]+', '', 'g'), '[\\s]+', '', 'g')::bytea), 'base64'), ',')::bytea AS hash_b64 FROM
+(SELECT COUNT(*) AS cnt, STRING_AGG(encode(SHA256(regexp_replace(subq.str, '[[:space:]]+', '', 'g')::bytea), 'base64'), ',')::bytea AS hash_b64 FROM
  (SELECT '('|| epoch_no ||','|| slot_no ||','|| txidx
          ||','|| inputs::text
          ||','|| COALESCE(outputs::text, 'null') ||')' AS str

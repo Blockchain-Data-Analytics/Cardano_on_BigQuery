@@ -7,7 +7,8 @@ metadata:
     repo: Cardano_on_BigQuery.git
     app.kubernetes.io/version: 1.0.2
 spec:
-  schedule: 48 5/6 * * *
+  schedule: 48 2/6 * * *
+  timeZone: "Etc/UTC"
   concurrencyPolicy: Forbid
   suspend: false
   jobTemplate:
